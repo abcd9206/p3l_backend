@@ -4,15 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
-class Penitip extends Model
+use Illuminate\Foundation\Auth\Pegawai as Authenticatable;
+
+class Penitip extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     public $timestamps = false;
 
     protected $table = "penitips";
     protected $primaryKey = "id_penitip";
+    protected $keyType = 'string';
 
     protected $fillable =[
         'NIK',
