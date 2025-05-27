@@ -7,37 +7,40 @@ use App\Models\Pembeli;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class PembeliController extends Controller
 {
-    public function register (Request $request)
+    public function register(Request $request)
     {
-        $request->validate([
+        $regisPembeli = $request->all();
+
+        $validate = Validator::make($regisPembeli, [
             'nama_pembeli' => 'required|string|max:255',
-            'tlpn_pembeli' => 'required|string|max:20',
+            'alamat_pembeli' => 'required|string|max:255',
             'email_pembeli' => 'required|string|email|max:255|unique:pembelis',
             'pass_pembeli' => 'required|string|min:8',
         ]);
 
+        if ($validate->fails()) {
+            return response(['message' => $validate->errors()->first()], 400);
+        }
+
+        $regisPembeli['pass_pembeli'] = bcrypt($request->pass_pembeli);
+
         $latest = DB::table('pembelis')->select('id_pembeli')
-                ->where('id_pembeli', 'like', 'B-%')
-                ->orderByDesc('id_pembeli')
-                ->first();
+            ->where('id_pembeli', 'like', 'O-%')
+            ->orderByDesc('id_pembeli')
+            ->first();
 
         if ($latest) {
             $num = (int) substr($latest->id_pembeli, 2);
-            $newId = 'B-' . str_pad($num + 1, 4, '0', STR_PAD_LEFT);
+            $newId = 'O-' . str_pad($num + 1, 4, '0', STR_PAD_LEFT);
         } else {
-            $newId = 'B-0001';
+            $newId = 'O-0001';
         }
 
-        $pembeli = Pembeli::create([
-            'id_pembeli' => $newId,
-            'nama_pembeli' => $request->nama_pembeli,
-            'tlpn_pembeli' => $request->tlpn_pembeli,
-            'email_pembeli' => $request->email_pembeli,
-            'pass_pembeli' => Hash::make($request->pass_pembeli),
-        ]);
+        $pembeli = Pembeli::create($regisPembeli);
 
         return response()->json([
             'pembeli' => $pembeli,
@@ -47,20 +50,26 @@ class PembeliController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
+        $loginPembeli = $request->all();
+
+        $validate = Validator::make($loginPembeli, [
             'email_pembeli' => 'required|string|email',
-            'pass_pembeli' => 'required|string',
+            'pass_pembeli' => 'required|min 8',
         ]);
 
-        $pembeli = Pembeli::where('email_pembeli', $request->email_pembeli)->first();
-
-        if (!$pembeli || !Hash::check($request->pass, $pembeli->pass_pembeli)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        if ($validate->fails()) {
+            return response(['message' => $validate->errors()->first()], 400);
         }
 
-        $token = $pembeli->createToken('Personal Access Token')->plainTextToken;
+        if (!Pembeli::attempt($loginPembeli)) {
+            return response(['message' => 'Invalid email & password match'], 401);
+        }
+
+        $pembeli = Pembeli::pembeli();
+        $token = $pembeli->createToken('Authentication Token')->accessToken;
 
         return response()->json([
+            'message' => 'Logged in successfully',
             'detail' => $pembeli,
             'token' => $token,
         ]);
@@ -68,11 +77,10 @@ class PembeliController extends Controller
 
     public function logout(Request $request)
     {
-        if ($request->user()) {
-            $request->user()->currentAccessToken()->delete();
-            return response()->json(['message' => 'Logged out successfully']);
-        }
+        $request->user()->token()->revoke();
 
-        return response()->json(['message' => 'Not logged in'], 401);
+        return response([
+            'message' => 'Logged Out'
+        ]);
     }
 }

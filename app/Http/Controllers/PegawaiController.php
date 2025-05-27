@@ -7,22 +7,32 @@ use App\Models\Pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class PegawaiController extends Controller
 {
-    public function register (Request $request)
+    public function register(Request $request)
     {
-        $request->validate([
+        $regisPegawai = $request->all();
+
+        $validate = Validator::make($regisPegawai, [
             'nama_pegawai' => 'required|string|max:255',
-            'tgl _pegawai' => 'required|date',
+            'alamat_pegawai' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
             'email_pegawai' => 'required|string|email|max:255|unique:pegawais',
             'pass_pegawai' => 'required|string|min:8',
         ]);
 
+        if ($validate->fails()) {
+            return response(['message' => $validate->errors()->first()], 400);
+        }
+
+        $regisPegawai['pass_pegawai'] = bcrypt($request->pass_pegawai);
+
         $latest = DB::table('pegawais')->select('id_pegawai')
-                ->where('id_pegawai', 'like', 'P-%')
-                ->orderByDesc('id_pegawai')
-                ->first();
+            ->where('id_pegawai', 'like', 'P-%')
+            ->orderByDesc('id_pegawai')
+            ->first();
 
         if ($latest) {
             $num = (int) substr($latest->id_pegawai, 2);
@@ -31,13 +41,7 @@ class PegawaiController extends Controller
             $newId = 'P-0001';
         }
 
-        $pegawai = Pegawai::create([
-            'id_pegawai' => $newId,
-            'nama_pegawai' => $request->nama_pegawai,
-            'tgl_lahir' => $request->tgl_lahir,
-            'email_pegawai' => $request->email_pegawai,
-            'pass_pegawai' => Hash::make($request->pass_pegawai),
-        ]);
+        $pegawai = Pegawai::create($regisPegawai);
 
         return response()->json([
             'pegawai' => $pegawai,
@@ -47,20 +51,26 @@ class PegawaiController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
+        $loginPegawai = $request->all();
+
+        $validate = Validator::make($loginPegawai, [
             'email_pegawai' => 'required|string|email',
-            'pass' => 'required|string',
+            'pass_pegawai' => 'required|min 8',
         ]);
 
-        $pegawai = Pegawai::where('email_pegawai', $request->email_pegawai)->first();
-
-        if (!$pegawai || !Hash::check($request->pass, $pegawai->pass_pegawai)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        if ($validate->fails()) {
+            return response(['message' => $validate->errors()->first()], 400);
         }
 
-        $token = $pegawai->createToken('Personal Access Token')->plainTextToken;
+        if (!Pegawai::attempt($loginPegawai)) {
+            return response(['message' => 'Invalid email & password match'], 401);
+        }
+
+        $pegawai = Pegawai::pegawai();
+        $token = $pegawai->createToken('Authentication Token')->accessToken;
 
         return response()->json([
+            'message' => 'Logged in successfully',
             'detail' => $pegawai,
             'token' => $token,
         ]);
@@ -68,11 +78,10 @@ class PegawaiController extends Controller
 
     public function logout(Request $request)
     {
-        if ($request->user()) {
-            $request->user()->currentAccessToken()->delete();
-            return response()->json(['message' => 'Logged out successfully']);
-        }
+        $request->user()->token()->revoke();
 
-        return response()->json(['message' => 'Not logged in'], 401);
+        return response([
+            'message' => 'Logged Out'
+        ]);
     }
 }

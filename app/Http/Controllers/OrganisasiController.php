@@ -7,22 +7,31 @@ use App\Models\Organisasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class OrganisasiController extends Controller
 {
-    public function register (Request $request)
+    public function register(Request $request)
     {
-        $request->validate([
+        $regisOrganisasi = $request->all();
+
+        $validate = Validator::make($regisOrganisasi, [
             'nama_organisasi' => 'required|string|max:255',
             'alamat_organisasi' => 'required|string|max:255',
             'email_organisasi' => 'required|string|email|max:255|unique:organisasis',
             'pass_organisasi' => 'required|string|min:8',
         ]);
 
+        if ($validate->fails()) {
+            return response(['message' => $validate->errors()->first()], 400);
+        }
+
+        $regisOrganisasi['pass_organisasi'] = bcrypt($request->pass_organisasi);
+
         $latest = DB::table('organisasis')->select('id_organisasi')
-                ->where('id_organisasi', 'like', 'O-%')
-                ->orderByDesc('id_organisasi')
-                ->first();
+            ->where('id_organisasi', 'like', 'O-%')
+            ->orderByDesc('id_organisasi')
+            ->first();
 
         if ($latest) {
             $num = (int) substr($latest->id_organisasi, 2);
@@ -31,12 +40,7 @@ class OrganisasiController extends Controller
             $newId = 'O-0001';
         }
 
-        $organisasi = Organisasi::create([
-            'id_organisasi' => $newId,
-            'nama_organisasi' => $request->nama_organisasi,
-            'email_organisasi' => $request->email_organisasi,
-            'pass_organisasi' => Hash::make($request->pass_organisasi),
-        ]);
+        $organisasi = Organisasi::create($regisOrganisasi);
 
         return response()->json([
             'organisasi' => $organisasi,
@@ -46,20 +50,26 @@ class OrganisasiController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
+        $loginOrganisasi = $request->all();
+
+        $validate = Validator::make($loginOrganisasi, [
             'email_organisasi' => 'required|string|email',
-            'pass' => 'required|string',
+            'pass_pegawai' => 'required|min 8',
         ]);
 
-        $organisasi = Organisasi::where('email', $request->email)->first();
-
-        if (!$organisasi || !Hash::check($request->pass, $user->pass)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        if ($validate->fails()) {
+            return response(['message' => $validate->errors()->first()], 400);
         }
 
-        $token = $organisasi->createToken('Personal Access Token')->plainTextToken;
+        if (!Organisasi::attempt($loginOrganisasi)) {
+            return response(['message' => 'Invalid email & password match'], 401);
+        }
+
+        $organisasi = Organisasi::organisasi();
+        $token = $organisasi->createToken('Authentication Token')->accessToken;
 
         return response()->json([
+            'message' => 'Logged in successfully',
             'detail' => $organisasi,
             'token' => $token,
         ]);
@@ -67,11 +77,10 @@ class OrganisasiController extends Controller
 
     public function logout(Request $request)
     {
-        if (Auth::check()) {
-            $request->user()->currentAccessToken()->delete();
-            return response()->json(['message'=>'Logged out successfully']);
-        }
+        $request->user()->token()->revoke();
 
-        return response()->json(['message' => 'Not logged in'], 401);
+        return response([
+            'message' => 'Logged Out'
+        ]);
     }
 }

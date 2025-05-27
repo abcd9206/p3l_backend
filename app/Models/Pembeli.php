@@ -11,17 +11,17 @@ use Illuminate\Foundation\Auth\Pembeli as Authenticatable;
 class Pembeli extends Authenticatable
 {
     use HasFactory, HasApiTokens;
-    
+
     public $timestamps = false;
 
     protected $table = "pembelis";
     protected $primaryKey = "id_pembeli";
     protected $keyType = 'string';
 
-    protected $fillable =[
+    protected $fillable = [
         'email_pembeli',
         'pass_pembeli',
-        'username',
+        'nama_penitip',
         'tlpn_pembeli',
         'point_reward',
     ];
