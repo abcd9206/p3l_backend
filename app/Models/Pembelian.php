@@ -10,7 +10,7 @@ class Pembelian extends Model
 {
     use HasFactory;
 
-    protected $fillable =[
+    protected $fillable = [
         'id_pembelian',
         'jml_barang',
         'metode_pembayaran',
@@ -19,19 +19,21 @@ class Pembelian extends Model
         'foto_buktiPembayaran',
         'verifikasi_pembayaran',
         'status_pembelian',
-        'tgl_pembelian',
+        'tgl_checkout',
+        'tgl_lunas',
         'tgl_selesai',
         'tgl_pengambilan',
-        'status_proses',
         'id_pegawai',
         'id_pembeli',
     ];
 
-    public function Pegawai(){
+    public function Pegawai()
+    {
         return $this->belongsTo(Pegawai::class, 'id_pegawai');
     }
 
-    public function Pembeli(){
+    public function Pembeli()
+    {
         return $this->belongsTo(Pembeli::class, 'id_pembeli');
     }
 }

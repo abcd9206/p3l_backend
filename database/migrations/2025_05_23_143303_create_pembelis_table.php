@@ -4,15 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('pembelis', function (Blueprint $table) {
-            $table->string('id_pembeli')->unique();
+            $table->integer('id_pembeli')->unique();
             $table->string('email_pembeli');
             $table->string('pass_pembeli');
             $table->string('nama_pembeli');

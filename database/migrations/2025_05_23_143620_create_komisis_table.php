@@ -4,22 +4,21 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('komisis', function (Blueprint $table) {
-            $table->string('id_komisi')->unique();
+            $table->integer('id_komisi')->unique();
             $table->float('jml_komisiHunter');
             $table->float('jml_komisiPenitip');
             $table->float('jml_komisiReuseMart');
 
-            $table->string('id_pegawai');
-            $table->string('id_penitip');
-            $table->string('id_pembelian');
+            $table->integer('id_pegawai');
+            $table->integer('id_penitip');
+            $table->integer('id_pembelian');
             $table->timestamps();
 
             $table->foreign('id_pegawai')->references('id_pegawai')->on('pegawais')->onDelete('cascade');

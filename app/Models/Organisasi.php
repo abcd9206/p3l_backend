@@ -16,9 +16,8 @@ class Organisasi extends Authenticatable
 
     protected $table = "organisasis";
     protected $primaryKey = "id_organisasi";
-    protected $keyType = 'string';
 
-    protected $fillable =[
+    protected $fillable = [
         'email_organisasi',
         'pass_organisasi',
         'nama_organisasi',

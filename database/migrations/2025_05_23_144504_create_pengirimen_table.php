@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,9 +14,9 @@ return new class extends Migration
             $table->string('id_pengiriman')->unique();
             $table->string('status_pengiriman');
 
-            $table->string('id_pegawai');
-            $table->string('id_alamat');
-            $table->string('id_pembelian');
+            $table->integer('id_pegawai');
+            $table->integer('id_alamat');
+            $table->integer('id_pembelian');
             $table->timestamps();
 
             $table->foreign('id_pegawai')->references('id_pegawai')->on('pegawais')->onDelete('cascade');
@@ -25,7 +24,7 @@ return new class extends Migration
             $table->foreign('id_pembelian')->references('id_pembelian')->on('pembelians')->onDelete('cascade');
         });
 
-        
+
     }
 
     /**

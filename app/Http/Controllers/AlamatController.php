@@ -11,7 +11,12 @@ class AlamatController extends Controller
 {
     public function index()
     {
-        $pembeli = Auth::pembeli();
+        $pembeli = Auth::user();
+        $user = Pembeli::find($pembeli->id_pembeli);
+
+        if (!$user) {
+            return response(['message' => 'Pembeli tidak ditemukan'], 404);
+        }
 
         $alamat = Alamat::where('id_pembeli', $pembeli->id_pembeli)->get();
 
@@ -23,19 +28,17 @@ class AlamatController extends Controller
 
     public function store(Request $request)
     {
-        $pembeli = Auth::pembeli();
+        $pembeli = Auth::user();
+        $user = Pembeli::find($pembeli->id_pembeli);
 
-        if (!$pembeli) {
+        if (!$user) {
             return response(['message' => 'Pembeli tidak ditemukan'], 404);
         }
 
         $alamatData = $request->all();
 
         $validate = Validator::make($alamatData, [
-            'nama_penerima' => 'required|max:100',
-            'no_hp' => 'required|max:15',
-            'alamat_lengkap' => 'required|max:255',
-            'kode_pos' => 'required|digits:5',
+            'alamat_pembeli' => 'required|max:255',
         ]);
 
         if ($validate->fails()) {
@@ -52,22 +55,90 @@ class AlamatController extends Controller
         ], 201);
     }
 
-    public function search(string $id_organisasi)
+    public function search(string $id_alamat)
     {
-        $pembeli = Auth::pembeli();
+        $pembeli = Auth::user();
+        $user = Pembeli::find($pembeli->id_pembeli);
 
-        $searchData = Alamat::find($id_organisasi);
+        if (!$user) {
+            return response(['message' => 'Pembeli tidak ditemukan'], 404);
+        }
+
+        $searchData = Alamat::find($id_alamat);
 
         if (!$searchData) {
-            return response ([
-                'message'=> 'Address Not Found',
-                'data'=> $searchData
+            return response([
+                'message' => 'Address Not Found',
+                'data' => $searchData
             ], 200);
         }
     }
 
-    public function update(Request $request, string $id_organisasi)
+    public function update(Request $request, string $id_alamat)
     {
-        
+        $pembeli = Auth::user();
+        $user = Pembeli::find($pembeli->id_pembeli);
+
+        if (!$user) {
+            return response(['message' => 'Pembeli tidak ditemukan'], 404);
+        }
+
+        $alamat = Alamat::find($id_alamat);
+
+        if (is_null($alamat)) {
+            return response([
+                'message' => 'Address Not Found',
+                'data' => null
+            ], 404);
+        }
+
+        if ($alamat->id_pembeli !== $pembeli) {
+            return response([
+                'message' => 'Unauthorized: This address is not yours.',
+            ], 403);
+        }
+
+        $updateData = $request->all();
+
+        $validate = Validator::make($updateData, [
+            'alamat_pembeli' => 'required|max:255',
+        ]);
+
+        if ($validate->fails()) {
+            return response([
+                'message' => $validate->errors()
+            ], 400);
+        }
+
+        $alamat->update($updateData);
+
+        return response([
+            'message' => 'Address Update Successfully',
+            'data' => $alamat,
+        ], 200);
+    }
+
+    public function destroy($id_alamat)
+    {
+        $alamat = Alamat::find($id_alamat);
+
+        if (is_null($alamat)) {
+            return response([
+                'message' => 'Alamat Not Found',
+                'data' => null
+            ], 404);
+        }
+
+        if ($alamat->delete()) {
+            return response([
+                'message' => 'Alamat Deleted Successfully',
+                'data' => $alamat,
+            ], 200);
+        }
+
+        return response([
+            'message' => 'Delete Alamat Failed',
+            'data' => null,
+        ], 400);
     }
 }

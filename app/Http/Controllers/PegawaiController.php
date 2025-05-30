@@ -11,26 +11,26 @@ use Illuminate\Support\Facades\Validator;
 
 class PegawaiController extends Controller
 {
-    public function register(Request $request)
+    public function store(Request $request)
     {
-        $regisPegawai = $request->all();
+        $pegawai = Auth::user();
+        $user = Pegawai::find($pegawai->id_pegawai);
 
-        $validate = Validator::make($regisPegawai, [
+        if (!$pegawai || $pegawai->jabatan !== 'Admin') {
+            return response(['message' => 'Pegawai tidak ditemukan'], 404);
+        }
+
+        $pegawaiData = $request->all();
+
+        $validate = Validator::make($pegawaiData, [
             'nama_pegawai' => 'required|string|max:255',
             'alamat_pegawai' => 'required|string|max:255',
             'jabatan' => 'required|string|max:255',
-            'email_pegawai' => 'required|string|email|max:255|unique:pegawais',
+            'email_pegawai' => 'required|string|email|max:255|unique:pegawais,email_pegawai',
             'pass_pegawai' => 'required|string|min:8',
         ]);
 
-        if ($validate->fails()) {
-            return response(['message' => $validate->errors()->first()], 400);
-        }
-
-        $regisPegawai['pass_pegawai'] = bcrypt($request->pass_pegawai);
-
-        $latest = DB::table('pegawais')->select('id_pegawai')
-            ->where('id_pegawai', 'like', 'P-%')
+        $latest = Pegawai::where('id_pegawai', 'like', 'P-%')
             ->orderByDesc('id_pegawai')
             ->first();
 
@@ -41,11 +41,14 @@ class PegawaiController extends Controller
             $newId = 'P-0001';
         }
 
-        $pegawai = Pegawai::create($regisPegawai);
+        $pegawaiData['id_pegawai'] = $newId;
+        $pegawaiData['pass_pegawai'] = bcrypt($pegawaiData['pass_pegawai']);
 
-        return response()->json([
-            'pegawai' => $pegawai,
-            'message' => 'Pegawai registered successfully'
+        $pegawai = Pegawai::create($pegawaiData);
+
+        return response([
+            'message' => 'Penitip berhasil ditambahkan',
+            'data' => $pegawai
         ], 201);
     }
 

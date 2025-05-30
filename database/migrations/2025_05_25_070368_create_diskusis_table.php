@@ -4,20 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('diskusis', function (Blueprint $table) {
-            $table->string('id_diskusi')->unique();
+            $table->integer('id_diskusi')->unique();
             $table->string('comment');
 
-            $table->string('id_pegawai');
-            $table->string('id_barang');
-            $table->string('id_pembeli');
+            $table->integer('id_pegawai');
+            $table->integer('id_barang');
+            $table->integer('id_pembeli');
             $table->timestamps();
 
             $table->foreign('id_pegawai')->references('id_pegawai')->on('pegawais')->onDelete('cascade');

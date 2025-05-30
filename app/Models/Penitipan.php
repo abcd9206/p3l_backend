@@ -14,25 +14,29 @@ class Penitipan extends Model
     protected $table = "penitipans";
     protected $primaryKey = "id_penitipan";
 
-    protected $fillable =[
+    protected $fillable = [
         'tgl_penitipan',
         'tgl_kadaluarsa',
         'tgl_pengembalian',
         'status_penitipan',
+        'nama_QC',
         'id_pegawai',
         'id_barang',
         'id_penitip',
     ];
 
-    public function Pegawai(){
+    public function Pegawai()
+    {
         return $this->belongsTo(Pegawai::class, 'id_pegawai');
     }
 
-    public function Barang(){
+    public function Barang()
+    {
         return $this->hasOne(Barang::class, 'id_barang');
     }
 
-    public function Penitip(){
+    public function Penitip()
+    {
         return $this->belongsTo(Penitip::class, 'id_penitip');
     }
 }

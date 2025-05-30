@@ -16,9 +16,8 @@ class Penitip extends Authenticatable
 
     protected $table = "penitips";
     protected $primaryKey = "id_penitip";
-    protected $keyType = 'string';
 
-    protected $fillable =[
+    protected $fillable = [
         'NIK',
         'email_penitip',
         'pass_penitip',

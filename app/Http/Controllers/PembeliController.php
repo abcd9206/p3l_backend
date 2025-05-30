@@ -29,15 +29,15 @@ class PembeliController extends Controller
         $regisPembeli['pass_pembeli'] = bcrypt($request->pass_pembeli);
 
         $latest = DB::table('pembelis')->select('id_pembeli')
-            ->where('id_pembeli', 'like', 'O-%')
+            ->where('id_pembeli', 'like', 'P-%')
             ->orderByDesc('id_pembeli')
             ->first();
 
         if ($latest) {
             $num = (int) substr($latest->id_pembeli, 2);
-            $newId = 'O-' . str_pad($num + 1, 4, '0', STR_PAD_LEFT);
+            $newId = 'P-' . str_pad($num + 1, 4, '0', STR_PAD_LEFT);
         } else {
-            $newId = 'O-0001';
+            $newId = 'P-0001';
         }
 
         $pembeli = Pembeli::create($regisPembeli);

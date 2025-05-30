@@ -14,36 +14,42 @@ class Barang extends Model
     protected $table = "barangs";
     protected $primaryKey = "id_barang";
 
-    protected $fillable =[
+    protected $fillable = [
         'nama_barang',
-        'status_garansi',
         'tgl_garansi',
         'rating_barang',
         'tgl_didonasikan',
+        'tgl_terdonasi',
         'id_pegawai',
         'id_penitip',
         'id_kategori',
         'id_donasi',
         'id_pembelian',
+        'id_pembeli',
     ];
 
-    public function Pegawai(){
+    public function Pegawai()
+    {
         return $this->belongsTo(Pegawai::class, 'id_pegawai');
     }
 
-    public function Penitip(){
+    public function Penitip()
+    {
         return $this->belongsTo(Penitip::class, 'id_penitip');
     }
 
-    public function Kategori(){
+    public function Kategori()
+    {
         return $this->belongsTo(Kategori::class, 'id_kategori');
     }
 
-    public function Pembelian(){
+    public function Pembelian()
+    {
         return $this->belongsTo(Pembelian::class, 'id_pembelian');
     }
 
-    public function Donasi(){
+    public function Donasi()
+    {
         return $this->hasOne(Donasi::class, 'id_donasi');
     }
 }

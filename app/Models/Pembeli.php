@@ -16,7 +16,6 @@ class Pembeli extends Authenticatable
 
     protected $table = "pembelis";
     protected $primaryKey = "id_pembeli";
-    protected $keyType = 'string';
 
     protected $fillable = [
         'email_pembeli',
