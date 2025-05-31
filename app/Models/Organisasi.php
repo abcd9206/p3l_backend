@@ -6,18 +6,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
-use Illuminate\Foundation\Auth\Organisasi as Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Organisasi extends Authenticatable
 {
     use HasFactory, HasApiTokens;
 
-    public $timestamps = false;
+    protected $table = 'organisasis';
+    protected $primaryKey = 'id_organisasi';
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $table = "organisasis";
-    protected $primaryKey = "id_organisasi";
 
     protected $fillable = [
+        'id_organisasi',
+        'id_organisasi',
         'email_organisasi',
         'pass_organisasi',
         'nama_organisasi',

@@ -13,19 +13,25 @@ class Donasi extends Model
 
     protected $table = "donasis";
     protected $primaryKey = "id_donasi";
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $fillable =[
+
+    protected $fillable = [
+        'id_donasi',
         'nama_penerima',
         'tgl_donasi',
         'id_pegawai',
         'id_penitip',
     ];
 
-    public function Pegawai(){
+    public function Pegawai()
+    {
         return $this->belongsto(Pegawai::class, 'id_pegawai');
     }
 
-    public function Penitip(){
+    public function Penitip()
+    {
         return $this->belongsTo(Penitip::class, 'id_penitip');
     }
 }

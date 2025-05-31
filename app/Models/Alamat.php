@@ -13,13 +13,17 @@ class Alamat extends Model
 
     protected $table = "alamats";
     protected $primaryKey = "id_alamat";
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $fillable =[
+    protected $fillable = [
+        'id_alamat',
         'alamat_pembeli',
         'id_pembeli'
     ];
 
-    public function Pembeli(){
+    public function Pembeli()
+    {
         return $this->belongsTo(Pembeli::class, 'id_pembeli');
     }
 }

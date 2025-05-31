@@ -11,13 +11,13 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('list_req_donasis', function (Blueprint $table) {
-            $table->integer('id_reqDonasi')->unique();
+            $table->id('id_reqDonasi');
             $table->string('desc_request');
 
-            $table->integer('id_organisasi');
+            $table->unsignedBigInteger('id_organisasi');
+            $table->foreign('id_organisasi')->references('id_organisasi')->on('organisasis')->onDelete('cascade');
             $table->timestamps();
 
-            $table->foreign('id_organisasi')->references('id_organisasi')->on('organisasis')->onDelete('cascade');
         });
 
     }

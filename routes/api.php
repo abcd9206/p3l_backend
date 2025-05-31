@@ -4,6 +4,9 @@ use App\Http\Controllers\OrganisasiController;
 use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\PembeliController;
 use App\Http\Controllers\PenitipController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\PenitipanController;
+use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +27,42 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/editPegawai', [PegawaiController::class, 'update']);
     Route::post('/editPenitip', [PenitipController::class, 'update']);
     Route::post('/editPembeli', [PembeliController::class, 'update']);
+
+    //pegawai
+    Route::get('/pegawai', [PegawaiController::class, 'index']);
+    Route::post('/pegawai', [PegawaiController::class, 'store']);
+    Route::get('/pegawai/{id_pegawai}', [PegawaiController::class, 'search']);
+    Route::post('/pegawai/{id_pegawai}', [PegawaiController::class, 'update']);
+    Route::delete('/pegawai/{id_pegawai}', [PegawaiController::class, 'destroy']);
+
+    //penitip
+    Route::get('/penitip', [PenitipController::class, 'index']);
+    Route::post('/penitip', [PenitipController::class, 'store']);
+    Route::get('/penitip/{id_penitip}', [PenitipController::class, 'search']);
+    Route::post('/penitip/{id_penitip}', [PenitipController::class, 'update']);
+    Route::delete('/penitip/{id_penitip}', [PenitipController::class, 'destroy']);
+
+    //barang
+    Route::get('/barang', [BarangController::class, 'index']);
+    Route::post('/barang', [BarangController::class, 'store']);
+    Route::get('/barang/{id_barang}', [BarangController::class, 'search']);
+    Route::post('/barang/{id_barang}', [BarangController::class, 'update']);
+    Route::delete('/barang/{id_barang}', [BarangController::class, 'destroy']);
+
+    //penitipan
+    Route::get('/penitipan', [PenitipanController::class, 'index']);
+    Route::post('/penitipan', [PenitipanController::class, 'store']);
+    Route::get('/penitipan/{id_penitipan}', [PenitipanController::class, 'search']);
+    Route::post('/penitipan/{id_penitipan}', [PenitipanController::class, 'update']);
+    Route::delete('/penitipan/{id_penitipan}', [PenitipanController::class, 'destroy']);
+
+    //pembelian
+    Route::get('/pembelian', [PembelianController::class, 'index']);
+    Route::post('/pembelian', [PembelianController::class, 'store']);
+    Route::get('/pembelian/{id_pemebelian}', [PembelianController::class, 'search']);
+    Route::post('/pembelian/{id_pembelian}', [PembelianController::class, 'updatePembeli']);
+    Route::post('/pembelian/{id_penitipan}', [PembelianController::class, 'updatePegawai']);
+    Route::delete('/pembelian/{id_pembelian}', [PembelianController::class, 'destroy']);
 });
 
 //register

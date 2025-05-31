@@ -14,22 +14,29 @@ class Diskusi extends Model
     protected $table = "diskusis";
     protected $primaryKey = "id_diskusi";
 
-    protected $fillable =[
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    protected $fillable = [
+        'id_diskusi',
         'comment',
         'id_pegawai',
         'id_barang',
         'id_pembeli',
     ];
 
-    public function Pegawai(){
+    public function Pegawai()
+    {
         return $this->belongsto(Pegawai::class, 'id_pegawai');
     }
 
-    public function Parang(){
+    public function Parang()
+    {
         return $this->belongsto(Barang::class, 'id_barang');
     }
 
-    public function Pembeli(){
+    public function Pembeli()
+    {
         return $this->belongsto(Pembeli::class, 'id_pembeli');
     }
 }

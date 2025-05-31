@@ -4,24 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Penitip;
 use App\Models\Pegawai;
+use App\Models\Barang;
+use App\Models\Penitipan;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class PenitipanController extends Controller
 {
     public function index()
     {
-        if (Auth::guard('penitip')->check()) {
-            $user = Auth::guard('penitip')->role();
-            $penitipan = Penitipan::where('id_penitip', $user->id_penitip)->get();
-        } elseif (Auth::guard('pegawai')->check()) {
-            $user = Auth::guard('pegawai')->role();
-            $penitipan = Penitipan::where('id_pegawai', $user->id_pegawai)->get();
-        } else {
-            return response()->json([
-                'message' => 'Unauthorized user',
-            ], 401);
-        }
+        $penitipan = Penitipan::all();
 
         return response()->json([
             'message' => 'Daftar penitipan',
@@ -43,8 +38,11 @@ class PenitipanController extends Controller
         $validate = Validator::make($penitipanData, [
             'nama_QC' => 'required|max:255',
             'tgl_penitipan' => 'required|date',
-            'id_penitip' => 'required|exists:penitips,id_penitip',
+            'id_penitip' => 'required',
             'konfirmasi_perpanjangan' => 'nullable|boolean',
+            'tgl_kadaluarsa' => 'required|date',
+            'id_pegawai' => 'required',
+            'id_barang' => 'required',
         ]);
 
         if ($validate->fails()) {
@@ -61,6 +59,10 @@ class PenitipanController extends Controller
             'tgl_penitipan' => $tglPenitipan,
             'tgl_kadaluarsa' => $tglKadaluarsa,
             'tgl_pengembalian' => $tglPengembalian,
+            'nama_QC' => $request->nama_QC,
+            'konfirmasi_perpanjangan' => $request->konfirmasi_perpanjangan,
+            'id_pegawai' => $request->id_pegawai,
+            'id_barang' => $request->id_barang,
         ]);
 
         return response([
@@ -71,11 +73,11 @@ class PenitipanController extends Controller
 
     public function update(Request $request, string $id_penitipan)
     {
-        $penitip = Auth::user();
-        $user = Penitip::find($penitip->id_penitip);
+        $pegawai = Auth::user();
+        $user = Pegawai::find($pegawai->id_pegawai);
 
-        if (!$penitip) {
-            return response(['message' => 'Penitip tidak ditemukan'], 404);
+        if (!$pegawai || $pegawai->jabatan !== 'Gudang') {
+            return response(['message' => 'Pegawai tidak ditemukan'], 404);
         }
 
         $penitipan = Penitipan::find($id_penitipan);
@@ -103,6 +105,7 @@ class PenitipanController extends Controller
         if ($konfirmasi) {
             // Perpanjangan disetujui
             $tglBaru = $request->tgl_penitipan ? Carbon::parse($request->tgl_penitipan) : now();
+            dd($tglBaru); // Apakah nilainya sesuai?
             $tglKadaluarsaBaru = $tglBaru->copy()->addDays(30);
             $tglPengambilanBaru = $tglKadaluarsaBaru->copy()->subDays(7);
 
@@ -154,5 +157,29 @@ class PenitipanController extends Controller
             'message' => 'Data ditemukan',
             'data' => $searchData
         ], 200);
+    }
+
+    public function destroy($id_penitipan)
+    {
+        $penitipan = Penitipan::find($id_penitipan);
+
+        if (is_null($penitipan)) {
+            return response([
+                'message' => 'Penitipan Not Found',
+                'data' => null
+            ], 404);
+        }
+
+        if ($penitipan->delete()) {
+            return response([
+                'message' => 'Penitipan Deleted Successfully',
+                'data' => $penitipan,
+            ], 200);
+        }
+
+        return response([
+            'message' => 'Delete penitipan Failed',
+            'data' => null,
+        ], 400);
     }
 }

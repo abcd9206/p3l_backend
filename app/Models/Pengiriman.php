@@ -14,23 +14,29 @@ class Pengiriman extends Model
 
     protected $table = "pengirimen";
     protected $primaryKey = "id_pengiriman";
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $fillable =[
+    protected $fillable = [
+        'id_pengiriman',
         'status_pengiriman',
         'id_pegawai',
         'id_alamat',
         'id_pembelian',
     ];
 
-    public function Pegawai(){
+    public function Pegawai()
+    {
         return $this->belongsTo(Pegawai::class, 'id_pegawai');
     }
 
-    public function Alamat(){
+    public function Alamat()
+    {
         return $this->belongsTo(Alamat::class, 'id_alamat');
     }
 
-    public function Pembelian(){
+    public function Pembelian()
+    {
         return $this->hasOne(Pembelian::class, 'id_pembelian');
     }
 }

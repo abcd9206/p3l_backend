@@ -13,13 +13,18 @@ class Barang extends Model
 
     protected $table = "barangs";
     protected $primaryKey = "id_barang";
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
+        'id_barang',
         'nama_barang',
         'tgl_garansi',
         'rating_barang',
         'tgl_didonasikan',
         'tgl_terdonasi',
+        'harga_barang',
+        'desc_barang',
         'id_pegawai',
         'id_penitip',
         'id_kategori',

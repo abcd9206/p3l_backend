@@ -12,8 +12,11 @@ class TukarMerch extends Model
 
     protected $table = "tukar_merches";
     protected $primaryKey = "id_tukarMerch";
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $fillable =[
+    protected $fillable = [
+        'id_tukarMerch',
         'tgl_tukarMerch',
         'tgl_ambil',
         'status_merch',
@@ -23,19 +26,23 @@ class TukarMerch extends Model
         'id_penitip',
     ];
 
-    public function Pegawai(){
+    public function Pegawai()
+    {
         return $this->belongsTo(Pegawai::class, 'id_tukarMerch');
     }
 
-    public function Pembeli(){
+    public function Pembeli()
+    {
         return $this->belongsTo(Pembeli::class, 'id_tukarMerch');
     }
 
-    public function Merch(){
+    public function Merch()
+    {
         return $this->belongsTo(Merch::class, 'id_merch');
     }
 
-    public function Penitip(){
+    public function Penitip()
+    {
         return $this->belongsTo(Penitip::class, 'id_penitip');
     }
 }

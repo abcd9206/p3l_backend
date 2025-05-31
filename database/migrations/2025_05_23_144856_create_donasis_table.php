@@ -11,16 +11,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('donasis', function (Blueprint $table) {
-            $table->integer('id_donasi')->unique();
+            $table->id('id_donasi');
             $table->string('nama_penerima');
             $table->date('tgl_donasi');
 
-            $table->integer('id_pegawai');
-            $table->integer('id_penitip');
-            $table->timestamps();
-
+            $table->unsignedBigInteger('id_penitip');
+            $table->unsignedBigInteger('id_pegawai');
             $table->foreign('id_pegawai')->references('id_pegawai')->on('pegawais')->onDelete('cascade');
             $table->foreign('id_penitip')->references('id_penitip')->on('penitips')->onDelete('cascade');
+            $table->timestamps();
         });
 
     }

@@ -13,8 +13,11 @@ class Komisi extends Model
 
     protected $table = "komisis";
     protected $primaryKey = "id_komisi";
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $fillable =[
+    protected $fillable = [
+        'id_komisi',
         'jml_komisiHunter',
         'jml_komisiPenitip',
         'jml_komisiReuseMart',
@@ -23,15 +26,18 @@ class Komisi extends Model
         'id_pembelian',
     ];
 
-    public function Pegawai(){
+    public function Pegawai()
+    {
         return $this->belongsTo(Pegawai::class, 'id_pegawai');
     }
 
-    public function Penitip(){
+    public function Penitip()
+    {
         return $this->belongsTo(Penitip::class, 'id_penitip');
     }
 
-    public function Pembelian(){
+    public function Pembelian()
+    {
         return $this->hasOne(Pembelian::class, 'id_pembelian');
     }
 }

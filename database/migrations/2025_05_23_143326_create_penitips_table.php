@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('penitips', function (Blueprint $table) {
-            $table->integer('id_penitip')->unique();
+            $table->id('id_penitip');
             $table->string('NIK');
             $table->string('nama_penitip');
             $table->integer('point_reward');
@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->integer('jml_terdonasi');
             $table->string('badge_penitip');
             $table->float('ratarata_rating');
+
             $table->timestamps();
         });
     }

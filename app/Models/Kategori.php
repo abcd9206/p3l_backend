@@ -13,8 +13,11 @@ class Kategori extends Model
 
     protected $table = "kategoris";
     protected $primaryKey = "id_kategori";
-    
-    protected $fillable =[
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    protected $fillable = [
+        'id_kategori',
         'jenis_kategori',
     ];
 }

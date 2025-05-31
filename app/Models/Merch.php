@@ -13,14 +13,18 @@ class Merch extends Model
 
     protected $table = "merches";
     protected $primaryKey = "id_merch";
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $fillable =[
+    protected $fillable = [
+        'id_merch',
         'nama_merch',
         'stok_merch',
         'id_pegawai',
     ];
 
-    public function Pegawai(){
+    public function Pegawai()
+    {
         return $this->belongsTo(Pegawai::class, 'id_pegawai');
     }
 }

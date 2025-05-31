@@ -13,12 +13,15 @@ class Penitipan extends Model
 
     protected $table = "penitipans";
     protected $primaryKey = "id_penitipan";
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
+        'id_penitipan',
         'tgl_penitipan',
         'tgl_kadaluarsa',
         'tgl_pengembalian',
-        'status_penitipan',
+        'konfirmasi_perpanjangan',
         'nama_QC',
         'id_pegawai',
         'id_barang',

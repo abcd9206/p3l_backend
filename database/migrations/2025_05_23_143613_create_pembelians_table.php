@@ -11,25 +11,25 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('pembelians', function (Blueprint $table) {
-            $table->integer('id_pembelian')->unique();
+            $table->id('id_pembelian');
             $table->integer('jml_barang');
             $table->string('metode_pembayaran');
             $table->float('total_pembelian');
             $table->string('status_pembayaran');
             $table->string('foto_buktiPembayaran');
             $table->boolean('verifikasi_pembayaran')->default(false);
-            $table->string('status_checkout');
-            $table->string('tgl_lunas');
+            $table->date('tgl_checkout');
+            $table->date('tgl_lunas');
             $table->date('tgl_pembelian');
             $table->date('tgl_selesai');
             $table->date('tgl_pengambilan');
 
-            $table->integer('id_pegawai');
-            $table->integer('id_pembeli');
-            $table->timestamps();
 
+            $table->unsignedBigInteger('id_pembeli');
+            $table->unsignedBigInteger('id_pegawai');
             $table->foreign('id_pegawai')->references('id_pegawai')->on('pegawais')->onDelete('cascade');
             $table->foreign('id_pembeli')->references('id_pembeli')->on('pembelis')->onDelete('cascade');
+            $table->timestamps();
         });
 
     }

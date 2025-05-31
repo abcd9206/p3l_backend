@@ -11,15 +11,13 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('pendapatans', function (Blueprint $table) {
-            $table->integer('id_pendapatan')->unique();
+            $table->id('id_pendapatan');
             $table->float('total_pendapatan');
-
-            $table->integer('id_penitip');
-
-            $table->timestamps();
-
+            $table->unsignedBigInteger('id_penitip');
             $table->foreign('id_penitip')->references('id_penitip')->on('penitips')->onDelete('cascade');
+            $table->timestamps();
         });
+
     }
 
     /**

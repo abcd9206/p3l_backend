@@ -11,13 +11,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('galleries', function (Blueprint $table) {
-            $table->integer('id_gambar')->unique();
+            $table->id('id_gambar');
             $table->string('foto_barang');
 
-            $table->integer('id_barang');
-            $table->timestamps();
-
+            $table->unsignedBigInteger('id_barang');
             $table->foreign('id_barang')->references('id_barang')->on('barangs')->onDelete('cascade');
+            $table->timestamps();
         });
 
     }

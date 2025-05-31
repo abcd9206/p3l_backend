@@ -13,13 +13,17 @@ class Gallery extends Model
 
     protected $table = "galleries";
     protected $primaryKey = "id_gambar";
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $fillable =[
+    protected $fillable = [
+        'id_gambar',
         'foto_barang',
         'id_barang',
     ];
 
-    public function Barang(){
-        return $this-> belongsTo(Barang::class,'id_barang');
+    public function Barang()
+    {
+        return $this->belongsTo(Barang::class, 'id_barang');
     }
 }

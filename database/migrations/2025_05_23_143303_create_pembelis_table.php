@@ -11,12 +11,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('pembelis', function (Blueprint $table) {
-            $table->integer('id_pembeli')->unique();
+            $table->id('id_pembeli');
             $table->string('email_pembeli');
             $table->string('pass_pembeli');
             $table->string('nama_pembeli');
             $table->string('tlpn_pembeli');
-            $table->integer('point_reward');
+            $table->integer('point_reward')->default();
             $table->timestamps();
         });
     }

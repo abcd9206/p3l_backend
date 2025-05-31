@@ -12,14 +12,18 @@ class Pendapatan extends Model
     public $timestamps = false;
 
     protected $table = "pendapatans";
-    protected $primaryKey = "id_totalPendapatan";
+    protected $primaryKey = "id_pendapatan";
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $fillable =[
+    protected $fillable = [
+        'id_pendapatan',
         'total_pendapatan',
         'id_penitip',
     ];
 
-    public function Penitip(){
+    public function Penitip()
+    {
         return $this->belongsTo(Penitip::class, 'id_penitip');
     }
 }

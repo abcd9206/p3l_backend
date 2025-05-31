@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Pegawai;
 use App\Models\Pembeli;
 use App\Models\Penitip;
+use App\Models\Barang;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class BarangController extends Controller
 {
     public function index()
     {
-
         $barang = Barang::all();
 
         return response()->json([
@@ -38,7 +39,13 @@ class BarangController extends Controller
             'tgl_garansi' => 'nullable|date',
             'harga_barang' => 'required|numeric|min:0',
             'status_barang' => 'required',
+            'id_kategori' => 'required',
+            'desc_barang' => 'required|max:255',
         ]);
+
+        $barangData["rating_barang"] = 0;
+        $barangData["tgl_didonasikan"] = "2000-01-01";
+        $barangData["tgl_terdonasi"] = "2000-01-01";
 
         if ($validate->fails()) {
             return response(['message' => $validate->errors()->first()], 400);
@@ -91,9 +98,11 @@ class BarangController extends Controller
 
         $validate = Validator::make($updateData, [
             'nama_barang' => 'required|max:255',
-            'status_garansi' => 'required|string|in:aktif,nonaktif',
             'tgl_garansi' => 'nullable|date|after_or_equal:tgl_garansi',
             'harga_barang' => 'required|numeric|min:0',
+            'desc_barang' => 'required|max:255',
+            'status_barang' => 'required',
+
         ]);
 
         if ($validate->fails()) {

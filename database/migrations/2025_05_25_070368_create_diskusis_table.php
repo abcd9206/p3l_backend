@@ -11,17 +11,16 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('diskusis', function (Blueprint $table) {
-            $table->integer('id_diskusi')->unique();
+            $table->id('id_diskusi');
             $table->string('comment');
 
-            $table->integer('id_pegawai');
-            $table->integer('id_barang');
-            $table->integer('id_pembeli');
-            $table->timestamps();
-
+            $table->unsignedBigInteger('id_pegawai');
+            $table->unsignedBigInteger('id_barang');
+            $table->unsignedBigInteger('id_pembeli');
             $table->foreign('id_pegawai')->references('id_pegawai')->on('pegawais')->onDelete('cascade');
             $table->foreign('id_barang')->references('id_barang')->on('barangs')->onDelete('cascade');
             $table->foreign('id_pembeli')->references('id_pembeli')->on('pembelis')->onDelete('cascade');
+            $table->timestamps();
         });
 
     }

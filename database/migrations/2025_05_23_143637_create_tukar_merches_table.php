@@ -11,21 +11,21 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('tukar_merches', function (Blueprint $table) {
-            $table->integer('id_tukarMerch')->unique();
+            $table->id('id_tukarMerch');
             $table->date('tgl_tukarMerch');
             $table->date('tgl_ambilMerch');
             $table->string('status_merch');
 
-            $table->integer('id_pegawai');
-            $table->integer('id_pembeli');
-            $table->integer('id_merch');
-            $table->integer('id_penitip');
-            $table->timestamps();
 
+            $table->unsignedBigInteger('id_penitip');
+            $table->unsignedBigInteger('id_merch');
+            $table->unsignedBigInteger('id_pembeli');
+            $table->unsignedBigInteger('id_pegawai');
             $table->foreign('id_pegawai')->references('id_pegawai')->on('pegawais')->onDelete('cascade');
             $table->foreign('id_pembeli')->references('id_pembeli')->on('pembelis')->onDelete('cascade');
             $table->foreign('id_merch')->references('id_merch')->on('merches')->onDelete('cascade');
             $table->foreign('id_penitip')->references('id_penitip')->on('penitips')->onDelete('cascade');
+            $table->timestamps();
         });
 
     }

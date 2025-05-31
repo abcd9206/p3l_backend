@@ -10,6 +10,14 @@ class Pembelian extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
+    protected $table = "pembelians";
+    protected $primaryKey = "id_pembelian";
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+
     protected $fillable = [
         'id_pembelian',
         'jml_barang',
@@ -18,7 +26,6 @@ class Pembelian extends Model
         'status_pembayaran',
         'foto_buktiPembayaran',
         'verifikasi_pembayaran',
-        'status_pembelian',
         'tgl_checkout',
         'tgl_lunas',
         'tgl_selesai',

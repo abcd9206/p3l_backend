@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class PembeliController extends Controller
 {
@@ -17,7 +18,7 @@ class PembeliController extends Controller
 
         $validate = Validator::make($regisPembeli, [
             'nama_pembeli' => 'required|string|max:255',
-            'alamat_pembeli' => 'required|string|max:255',
+            'tlpn_pembeli' => 'required|string|max:255',
             'email_pembeli' => 'required|string|email|max:255|unique:pembelis',
             'pass_pembeli' => 'required|string|min:8',
         ]);
@@ -26,27 +27,14 @@ class PembeliController extends Controller
             return response(['message' => $validate->errors()->first()], 400);
         }
 
-        $regisPembeli['pass_pembeli'] = bcrypt($request->pass_pembeli);
+        $regisPembeli = Pembeli::create($regisPembeli);
 
-        $latest = DB::table('pembelis')->select('id_pembeli')
-            ->where('id_pembeli', 'like', 'P-%')
-            ->orderByDesc('id_pembeli')
-            ->first();
-
-        if ($latest) {
-            $num = (int) substr($latest->id_pembeli, 2);
-            $newId = 'P-' . str_pad($num + 1, 4, '0', STR_PAD_LEFT);
-        } else {
-            $newId = 'P-0001';
-        }
-
-        $pembeli = Pembeli::create($regisPembeli);
-
-        return response()->json([
-            'pembeli' => $pembeli,
-            'message' => 'Pembeli registered successfully'
+        return response([
+            'message' => 'Pembeli berhasil ditambahkan',
+            'data' => $regisPembeli
         ], 201);
     }
+
 
     public function login(Request $request)
     {
@@ -54,19 +42,20 @@ class PembeliController extends Controller
 
         $validate = Validator::make($loginPembeli, [
             'email_pembeli' => 'required|string|email',
-            'pass_pembeli' => 'required|min 8',
+            'pass_pembeli' => 'required|min:8',
         ]);
 
         if ($validate->fails()) {
             return response(['message' => $validate->errors()->first()], 400);
         }
 
-        if (!Pembeli::attempt($loginPembeli)) {
-            return response(['message' => 'Invalid email & password match'], 401);
+        $pembeli = Pembeli::where('email_pembeli', $request->email_pembeli)->where('pass_pembeli', $request->pass_pembeli)->first();
+
+        if (!$pembeli) {
+            return response()->json(['message' => 'Email atau password salah'], 401);
         }
 
-        $pembeli = Pembeli::pembeli();
-        $token = $pembeli->createToken('Authentication Token')->accessToken;
+        $token = $pembeli->createToken('Authentication Token')->plainTextToken;
 
         return response()->json([
             'message' => 'Logged in successfully',

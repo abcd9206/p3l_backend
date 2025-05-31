@@ -4,24 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Pegawai;
 use App\Models\Pembeli;
+use App\Models\Pembelian;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PembelianController extends Controller
 {
     public function index()
     {
-        if (Auth::guard('pembeli')->check()) {
-            $user = Auth::guard('pembeli')->role();
-            $pembelian = Pembelian::where('id_pembeli', $user->id_pembeli)->get();
-        } elseif (Auth::guard('pegawai')->check()) {
-            $user = Auth::guard('pegawai')->role();
-            $pembelian = Pembelian::where('id_pegawai', $user->id_pegawai)->get();
-        } else {
-            return response()->json([
-                'message' => 'Unauthorized user',
-            ], 401);
-        }
+        $pembelian = Pembelian::all();
 
         return response()->json([
             'message' => 'Daftar pembelian',

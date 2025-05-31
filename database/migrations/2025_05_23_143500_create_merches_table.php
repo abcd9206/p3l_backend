@@ -11,14 +11,14 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('merches', function (Blueprint $table) {
-            $table->integer('id_merch')->unique();
+            $table->id('id_merch');
             $table->string('nama_merch');
             $table->integer('stok_merch');
 
-            $table->integer('id_pegawai');
+            $table->unsignedBigInteger('id_pegawai');
+            $table->foreign('id_pegawai')->references('id_pegawai')->on('pegawais')->onDelete('cascade');
             $table->timestamps();
 
-            $table->foreign('id_pegawai')->references('id_pegawai')->on('pegawais')->onDelete('cascade');
         });
 
     }
