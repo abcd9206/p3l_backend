@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Pegawai;
 use App\Models\Pembeli;
 use App\Models\Pembelian;
+use App\Models\Barang;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\BarangController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+
 
 class PembelianController extends Controller
 {
@@ -35,8 +39,8 @@ class PembelianController extends Controller
         $validate = Validator::make($pembelianData, [
             'jml_barang' => 'required|integer|min:1',
             'metode_pembayaran' => 'required|string|max:50',
-            'status_pembayaran' => 'required|string|in:pending',
             'verifikasi_pembayaran' => 'required|boolean',
+            'id_barang' => '',
         ]);
 
         if ($validate->fails()) {
@@ -45,15 +49,17 @@ class PembelianController extends Controller
 
         $barang = Barang::find($request->id_barang);
 
-        $total = $barang->harga_barang * $request->jml_barang;
 
         if (!$barang) {
             return response(['message' => 'Barang tidak ditemukan'], 404);
         }
 
+        $total = $barang->harga_barang * $request->jml_barang;
         $pembelianData['total_pembelian'] = $total;
 
         $pembelianData['id_pembeli'] = $pembeli->id_pembeli;
+
+        $pembelianData['status_pembayaran'] = 'pending';
 
         $pembelian = Pembelian::create($pembelianData);
 

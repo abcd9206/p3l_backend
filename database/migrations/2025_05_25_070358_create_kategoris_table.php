@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::create('kategoris', function (Blueprint $table) {
             $table->id('id_kategori');
+            $table->string('icon')->nullable();
             $table->string('jenis_kategori');
             $table->timestamps();
         });
