@@ -75,6 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/pengiriman', [PengirimanController::class, 'index']);
     Route::post('/pengiriman', [PengirimanController::class, 'store']);
     Route::get('/pengiriman/{id_pengiriman}', [PengirimanController::class, 'search']);
+    Route::post('/pengiriman/{id_pengiriman}', [PengirimanController::class, 'update']);
 
     //alamat
     Route::get('/alamat', [AlamatController::class, 'index']);
