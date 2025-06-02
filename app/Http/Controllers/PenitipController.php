@@ -56,6 +56,11 @@ class PenitipController extends Controller
             return response(['message' => $validate->errors()], 400);
         }
 
+        $penitipData['saldo'] = 0;
+        $penitipData['jml_terjual'] = 0;
+        $penitipData['jml_terdonasi'] = 0;
+        $penitipData['badge_penitip'] = "";
+        $penitipData['ratarata_rating'] = 0;
         $penitipData['password'] = bcrypt($request->password);
         $penitip = Penitip::create($penitipData);
 
@@ -120,6 +125,36 @@ class PenitipController extends Controller
         ], 200);
     }
 
+    public function updatePegawai(Request $request, $id_penitip)
+    {
+        $penitip = Penitip::find($id_penitip);
+
+        if (is_null($penitip)) {
+            return response([
+                'message' => 'Penitip tidak ditemukan.',
+                'data' => null
+            ], 404);
+        }
+
+        $updateData = $request->only([
+            '',
+            'email',
+            'password'
+        ]);
+
+        $penitip = Penitip::where('email', $request->email)->first();
+
+        if (!$penitip || !Hash::check($request->password, $penitip->password)) {
+            return response()->json(['message' => 'Email atau password salah'], 401);
+        }
+
+        $penitip->update($updateData);
+
+        return response([
+            'message' => 'Data penitip berhasil diupdate.',
+            'data' => $penitip
+        ], 200);
+    }
 
     public function login(Request $request)
     {

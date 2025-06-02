@@ -25,13 +25,6 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
-        $pegawai = Auth::user();
-        $user = Pegawai::find($pegawai->id_pegawai);
-
-        if ($pegawai->jabatan !== 'Gudang') {
-            return response(['message' => 'Pegawai tidak ditemukan'], 404);
-        }
-
         $barangData = $request->all();
 
         $validate = Validator::make($barangData, [
@@ -78,13 +71,6 @@ class BarangController extends Controller
 
     public function update(Request $request, string $id_barang)
     {
-        $pegawai = Auth::user();
-        $user = Pegawai::find($pegawai->id_pegawai);
-
-        if (!$pegawai || $pegawai->jabatan !== 'CS') {
-            return response(['message' => 'Pegawai tidak ditemukan'], 404);
-        }
-
         $barang = Barang::find($id_barang);
 
         if (is_null($barang)) {

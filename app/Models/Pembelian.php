@@ -32,6 +32,7 @@ class Pembelian extends Model
         'tgl_pengambilan',
         'id_pegawai',
         'id_pembeli',
+        'id_barang',
     ];
 
     public function Pegawai()
@@ -42,5 +43,10 @@ class Pembelian extends Model
     public function Pembeli()
     {
         return $this->belongsTo(Pembeli::class, 'id_pembeli');
+    }
+
+    public function Barang()
+    {
+        return $this->belongsTo(Barang::class, 'id_barang');
     }
 }
