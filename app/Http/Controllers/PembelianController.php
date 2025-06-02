@@ -11,6 +11,7 @@ use App\Http\Controllers\BarangController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 
 class PembelianController extends Controller
@@ -47,6 +48,7 @@ class PembelianController extends Controller
             return response(['message' => $validate->errors()->first()], 400);
         }
 
+
         $barang = Barang::find($request->id_barang);
 
 
@@ -61,7 +63,23 @@ class PembelianController extends Controller
 
         $pembelianData['status_pembayaran'] = 'pending';
 
-        $pembelian = Pembelian::create($pembelianData);
+        $pembelianData['foto_buktiPembayaran'] = '-';
+
+        $pembelian = Pembelian::create([
+            'jml_barang' => $request->jml_barang,
+            'metode_pembayaran' => $request->metode_pembayaran,
+            'verifikasi_pembayaran' => 0,
+            'id_barang' => $request->id_barang,
+            'total_pembelian' => $request->total_pembelian,
+            'id_pembeli' => $request->id_pembeli,
+            'status_pembayaran' => 'pending',
+            'foto_buktiPembayaran' => '-',
+            'tgl_checkout' => now(),
+            'tgl_lunas' => now(),
+            'tgl_selesai' => now(),
+            'tgl_pembelian' => now(),
+            'tgl_pengembalian' => now(),
+        ]);
 
         return response([
             'message' => 'Pembelian berhasil ditambahkan',

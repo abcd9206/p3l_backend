@@ -61,6 +61,7 @@ class PenitipController extends Controller
         $penitipData['jml_terdonasi'] = 0;
         $penitipData['badge_penitip'] = "";
         $penitipData['ratarata_rating'] = 0;
+        $penitipData['point_reward'] = '0';
         $penitipData['password'] = bcrypt($request->password);
         $penitip = Penitip::create($penitipData);
 
