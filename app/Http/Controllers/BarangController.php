@@ -28,7 +28,7 @@ class BarangController extends Controller
         $pegawai = Auth::user();
         $user = Pegawai::find($pegawai->id_pegawai);
 
-        if ($pegawai->jabatan !== 'CS') {
+        if ($pegawai->jabatan !== 'Gudang') {
             return response(['message' => 'Pegawai tidak ditemukan'], 404);
         }
 
