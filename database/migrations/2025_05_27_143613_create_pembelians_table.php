@@ -27,8 +27,10 @@ return new class extends Migration {
 
             $table->unsignedBigInteger('id_pembeli');
             $table->unsignedBigInteger('id_pegawai');
+            $table->unsignedBigInteger('id_barang');
             $table->foreign('id_pegawai')->references('id_pegawai')->on('pegawais')->onDelete('cascade');
             $table->foreign('id_pembeli')->references('id_pembeli')->on('pembelis')->onDelete('cascade');
+            $table->foreign('id_barang')->references('id_barang')->on('barangs')->onDelete('cascade');
             $table->timestamps();
         });
 

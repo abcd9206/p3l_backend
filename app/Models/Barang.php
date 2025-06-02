@@ -29,7 +29,6 @@ class Barang extends Model
         'id_penitip',
         'id_kategori',
         'id_donasi',
-        'id_pembelian',
         'id_pembeli',
     ];
 
