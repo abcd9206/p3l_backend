@@ -7,7 +7,10 @@ use App\Http\Controllers\PenitipController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\PenitipanController;
 use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\PengirimanController;
+use App\Http\Controllers\AlamatController;
 use App\Http\Controllers\Controller;
+use App\Models\Pengiriman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -67,6 +70,19 @@ Route::middleware('auth:sanctum')->group(function () {
     //kategori
     Route::get('/kategori', [KategoriController::class, 'index']);
     Route::post('/kategori', [KategoriController::class, 'store']);
+
+    //pengiriman
+    Route::get('/pengiriman', [PengirimanController::class, 'index']);
+    Route::post('/pengiriman', [PengirimanController::class, 'store']);
+    Route::get('/pengiriman/{id_pengiriman}', [PengirimanController::class, 'search']);
+    Route::post('/pengiriman/{id_pengiriman}', [PengirimanController::class, 'update']);
+
+    //alamat
+    Route::get('/alamat', [AlamatController::class, 'index']);
+    Route::post('/alamat', [AlamatController::class, 'store']);
+    Route::get('/alamat/{id_alamat}', [AlamatController::class, 'search']);
+    Route::post('/alamat/{id_alamat}', [AlamatController::class, 'update']);
+    Route::delete('/alamat/{id_alamat}', [AlamatController::class, 'destroy']);
 });
 
 //register

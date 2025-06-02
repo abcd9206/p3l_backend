@@ -138,7 +138,6 @@ class PenitipController extends Controller
         }
 
         $updateData = $request->only([
-            '',
             'email',
             'password'
         ]);

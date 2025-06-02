@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Pembeli;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Alamat;
+use Illuminate\Support\Facades\Validator;
 
 class AlamatController extends Controller
 {
@@ -92,7 +94,8 @@ class AlamatController extends Controller
             ], 404);
         }
 
-        if ($alamat->id_pembeli !== $pembeli) {
+        // FIX INI:
+        if ($alamat->id_pembeli !== $pembeli->id_pembeli) {
             return response([
                 'message' => 'Unauthorized: This address is not yours.',
             ], 403);
@@ -117,6 +120,7 @@ class AlamatController extends Controller
             'data' => $alamat,
         ], 200);
     }
+
 
     public function destroy($id_alamat)
     {
