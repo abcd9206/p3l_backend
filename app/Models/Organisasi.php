@@ -21,8 +21,8 @@ class Organisasi extends Authenticatable
     protected $fillable = [
         'id_organisasi',
         'id_organisasi',
-        'email_organisasi',
-        'pass_organisasi',
+        'email',
+        'password',
         'nama_organisasi',
         'alamat_organisasi',
     ];

@@ -19,13 +19,15 @@ class PembeliController extends Controller
         $validate = Validator::make($regisPembeli, [
             'nama_pembeli' => 'required|string|max:255',
             'tlpn_pembeli' => 'required|string|max:255',
-            'email_pembeli' => 'required|string|email|max:255|unique:pembelis',
-            'pass_pembeli' => 'required|string|min:8',
+            'email' => 'required|string|email|max:255|unique:pembelis',
+            'password' => 'required|string|min:8',
         ]);
 
         if ($validate->fails()) {
             return response(['message' => $validate->errors()->first()], 400);
         }
+
+        $regisPembeli['password'] = bcrypt($request->password);
 
         $regisPembeli = Pembeli::create($regisPembeli);
 
@@ -41,17 +43,17 @@ class PembeliController extends Controller
         $loginPembeli = $request->all();
 
         $validate = Validator::make($loginPembeli, [
-            'email_pembeli' => 'required|string|email',
-            'pass_pembeli' => 'required|min:8',
+            'email' => 'required|string|email',
+            'password' => 'required|min:8',
         ]);
 
         if ($validate->fails()) {
             return response(['message' => $validate->errors()->first()], 400);
         }
 
-        $pembeli = Pembeli::where('email_pembeli', $request->email_pembeli)->where('pass_pembeli', $request->pass_pembeli)->first();
+        $pembeli = Pembeli::where('email', $request->email)->first();
 
-        if (!$pembeli) {
+        if (!$pembeli || !Hash::check($request->password, $pembeli->password)) {
             return response()->json(['message' => 'Email atau password salah'], 401);
         }
 

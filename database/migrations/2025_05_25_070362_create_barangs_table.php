@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('nama_barang');
             $table->date('tgl_garansi');
             $table->float('harga_barang');
-            $table->enum('status_barang', ['terjual', 'didonasikan', 'dikembalikan', 'kadaluarsa', 'untuk donasi', tersedia]);
+            $table->enum('status_barang', ['terjual', 'didonasikan', 'dikembalikan', 'kadaluarsa', 'untuk donasi', 'tersedia']);
             $table->float('rating_barang');
             $table->date('tgl_didonasikan');
             $table->date('tgl_terdonasi');

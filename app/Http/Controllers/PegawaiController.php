@@ -13,13 +13,6 @@ class PegawaiController extends Controller
 {
     public function index()
     {
-        $pegawai = Auth::user();
-        $user = Pegawai::find($pegawai->id_pegawai);
-
-        if (!$pegawai) {
-            return response(['message' => 'Pegawai tidak ditemukan'], 404);
-        }
-
         $pegawai = Pegawai::all();
 
         return response()->json([
@@ -30,13 +23,6 @@ class PegawaiController extends Controller
 
     public function search(string $id_pegawai)
     {
-        $pegawai = Auth::user();
-        $user = Pegawai::find($pegawai->id_pegawai);
-
-        if (!$pegawai || $pegawai->jabatan !== 'Admin') {
-            return response(['message' => 'Hanya admin yang dapat mengakses data pegawai'], 403);
-        }
-
         $searchData = Pegawai::find($id_pegawai);
 
         if (!$searchData) {
@@ -51,26 +37,21 @@ class PegawaiController extends Controller
 
     public function store(Request $request)
     {
-        $pegawai = Auth::user();
-        $user = Pegawai::find($pegawai->id_pegawai);
-
-        if ($pegawai->jabatan !== 'Admin') {
-            return response(['message' => 'Pegawai tidak ditemukan'], 404);
-        }
-
         $pegawaiData = $request->all();
 
         $validate = Validator::make($pegawaiData, [
             'nama_pegawai' => 'required|string|max:255',
             'jabatan' => 'required|string|max:255',
-            'email_pegawai' => 'required|string|email|max:255|unique:pegawais,email_pegawai',
-            'pass_pegawai' => 'required|string|min:8',
+            'email' => 'required|string|email|max:255|unique:pegawais,email',
+            'password' => 'required|string|min:8',
             'tgl_lahir' => 'required|date',
         ]);
 
         if ($validate->fails()) {
             return response(['message' => $validate->errors()->first()], 400);
         }
+
+        $pegawaiData['password'] = bcrypt($pegawaiData['password']);
 
         $pegawai = Pegawai::create($pegawaiData);
 
@@ -106,13 +87,6 @@ class PegawaiController extends Controller
 
     public function update(Request $request, $id_pegawai)
     {
-        $authPegawai = Auth::user();
-        $admin = Pegawai::find($authPegawai->id_pegawai);
-
-        if (!$admin || $admin->jabatan !== 'Admin') {
-            return response(['message' => 'Hanya Admin yang dapat melakukan update data pegawai.'], 403);
-        }
-
         $pegawai = Pegawai::find($id_pegawai);
 
         if (is_null($pegawai)) {
@@ -123,16 +97,20 @@ class PegawaiController extends Controller
         }
 
         $updateData = $request->only([
-            'email_pegawai',
-            'pass_pegawai',
+            'email',
+            'password',
             'jabatan',
         ]);
 
         $validate = Validator::make($updateData, [
-            'email_pegawai' => 'nullable|string|email|max:255|unique:pegawais,email_pegawai,' . $pegawai->id_pegawai . ',id_pegawai',
-            'pass_pegawai' => 'nullable|string|min:8',
+            'email' => 'nullable|string|email|max:255|unique:pegawais,email,' . $pegawai->id_pegawai . ',id_pegawai',
+            'password' => 'nullable|string|min:8',
             'jabatan' => 'nullable|string|max:255',
         ]);
+
+        if (!empty($updateData['password'])) {
+            $updateData['password'] = bcrypt($updateData['password']);
+        }
 
         if ($validate->fails()) {
             return response(['message' => $validate->errors()->first()], 400);
@@ -151,14 +129,15 @@ class PegawaiController extends Controller
         $loginPegawai = $request->all();
 
         $validate = Validator::make($loginPegawai, [
-            'email_pegawai' => 'required|string|email',
-            'pass_pegawai' => 'required|min:8',
+            'email' => 'required|string|email',
+            'password' => 'required|min:8',
         ]);
 
-        $pegawai = Pegawai::where('email_pegawai', $loginPegawai['email_pegawai'])->first();
+        $pegawai = Pegawai::where('email', $request->email)->first();
 
-        if (!$pegawai || $pegawai->pass_pegawai !== $loginPegawai['pass_pegawai']) {
-            return response(['message' => 'Invalid email & password match'], 401);
+        // Gunakan Hash::check() untuk mencocokkan password
+        if (!$pegawai || !Hash::check($request->password, $pegawai->password)) {
+            return response(['message' => 'Email atau password salah'], 401);
         }
 
         $token = $pegawai->createToken('Authentication Token')->plainTextToken;

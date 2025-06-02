@@ -188,4 +188,28 @@ class PembelianController extends Controller
             'data' => $pembelian,
         ], 200);
     }
+
+    public function search(string $id_pembelian)
+    {
+        $pembeli = Auth::user();
+        $user = Pembeli::find($pembeli->id_pembeli);
+
+        if (!$pembeli) {
+            return response(['message' => 'Pembeli tidak ditemukan'], 404);
+        }
+
+        $searchData = Pembelian::find($id_pembelian);
+
+        if (!$searchData) {
+            return response([
+                'message' => 'Barang Not Found',
+                'data' => $searchData
+            ], 200);
+        }
+
+        return response([
+            'message' => 'Data ditemukan',
+            'data' => $searchData
+        ], 200);
+    }
 }

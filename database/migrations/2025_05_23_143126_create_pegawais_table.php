@@ -15,8 +15,8 @@ return new class extends Migration {
             $table->string('nama_pegawai');
             $table->date('tgl_lahir');
             $table->string('jabatan');
-            $table->string('email_pegawai');
-            $table->string('pass_pegawai');
+            $table->string('email');
+            $table->string('password');
             $table->timestamps();
         });
     }

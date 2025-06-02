@@ -20,8 +20,8 @@ class Pembeli extends Authenticatable
 
     protected $fillable = [
         'id_pembeli',
-        'email_pembeli',
-        'pass_pembeli',
+        'email',
+        'password',
         'nama_pembeli',
         'tlpn_pembeli',
         'point_reward',

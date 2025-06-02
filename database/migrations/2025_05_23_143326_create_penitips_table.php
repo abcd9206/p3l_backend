@@ -15,8 +15,8 @@ return new class extends Migration {
             $table->string('NIK');
             $table->string('nama_penitip');
             $table->integer('point_reward');
-            $table->string('email_penitip');
-            $table->string('pass_penitip');
+            $table->string('email');
+            $table->string('password');
             $table->float('saldo');
             $table->integer('jml_terjual');
             $table->integer('jml_terdonasi');

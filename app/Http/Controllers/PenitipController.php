@@ -16,13 +16,6 @@ class PenitipController extends Controller
 
     public function index()
     {
-        $pegawai = Auth::user();
-        $user = Pegawai::find($pegawai->id_pegawai);
-
-        if (!$user || $user->jabatan !== 'CS') {
-            return response(['message' => 'Pegawai tidak ditemukan atau bukan CS'], 403);
-        }
-
         $penitipList = Penitip::all();
 
         return response()->json([
@@ -31,16 +24,9 @@ class PenitipController extends Controller
         ], 200);
     }
 
-    public function search(string $id_pegawai)
+    public function search(string $id_penitip)
     {
-        $pegawai = Auth::user();
-        $user = Pegawai::find($pegawai->id_pegawai);
-
-        if (!$user || $user->jabatan !== 'CS') {
-            return response(['message' => 'Hanya pegawai dengan jabatan CS yang dapat mengakses fitur ini'], 403);
-        }
-
-        $searchData = Pegawai::find($id_pegawai);
+        $searchData = Penitip::find($id_penitip);
 
         if (!$searchData) {
             return response([
@@ -50,33 +36,27 @@ class PenitipController extends Controller
         }
 
         return response([
-            'message' => 'Data pegawai ditemukan',
+            'message' => 'Data penitip ditemukan',
             'data' => $searchData
         ], 200);
     }
 
     public function store(Request $request)
     {
-        $pegawai = Auth::user();
-        $user = Pegawai::find($pegawai->id_pegawai);
-
-        if ($pegawai->jabatan !== 'CS') {
-            return response(['message' => 'Pegawai tidak ditemukan'], 404);
-        }
-
         $penitipData = $request->all();
 
         $validate = Validator::make($penitipData, [
             'NIK' => 'required|string|max:255',
             'nama_penitip' => 'required|string|max:255',
-            'email_penitip' => 'required|string|email|max:255|unique:pegawais,email_pegawai',
-            'pass_penitip' => 'required|string|min:8',
+            'email' => 'required|string|email|max:255|unique:pegawais,email',
+            'password' => 'required|string|min:8',
         ]);
 
         if ($validate->fails()) {
             return response(['message' => $validate->errors()], 400);
         }
 
+        $penitipData['password'] = bcrypt($request->password);
         $penitip = Penitip::create($penitipData);
 
         return response([
@@ -111,13 +91,6 @@ class PenitipController extends Controller
 
     public function update(Request $request, $id_penitip)
     {
-        $pegawai = Auth::user();
-        $user = Pegawai::find($pegawai->id_pegawai);
-
-        if (!$user || $user->jabatan !== 'CS') {
-            return response(['message' => 'Hanya Pegawai dengan jabatan CS yang dapat mengubah data penitip.'], 403);
-        }
-
         $penitip = Penitip::find($id_penitip);
 
         if (is_null($penitip)) {
@@ -128,13 +101,15 @@ class PenitipController extends Controller
         }
 
         $updateData = $request->only([
-            'nama_penitip',
-            'email_penitip',
-            'pass_penitip'
+            'nama',
+            'email',
+            'password'
         ]);
 
-        if (isset($updateData['pass_penitip'])) {
-            $updateData['pass_penitip'] = bcrypt($updateData['pass_penitip']);
+        $penitip = Penitip::where('email', $request->email)->first();
+
+        if (!$penitip || !Hash::check($request->password, $penitip->password)) {
+            return response()->json(['message' => 'Email atau password salah'], 401);
         }
 
         $penitip->update($updateData);
@@ -151,17 +126,19 @@ class PenitipController extends Controller
         $loginPenitip = $request->all();
 
         $validate = Validator::make($loginPenitip, [
-            'email_penitip' => 'required|string|email',
-            'pass_penitip' => 'required|min:8',
+            'email' => 'required|string|email',
+            'password' => 'required|min:8',
         ]);
 
         if ($validate->fails()) {
             return response(['message' => $validate->errors()->first()], 400);
         }
 
-        $penitip = Penitip::where('email_penitip', $request->email_penitip)
-            ->where('pass_penitip', $request->pass_penitip)
-            ->first();
+        $penitip = Penitip::where('email', $request->email)->first();
+
+        if (!$penitip || !Hash::check($request->password, $penitip->password)) {
+            return response()->json(['message' => 'Email atau password salah'], 401);
+        }
 
         if (!$penitip) {
             return response()->json(['message' => 'Email atau password salah'], 401);
