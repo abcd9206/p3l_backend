@@ -82,8 +82,6 @@ class PembelianController extends Controller
             'tgl_pembelian' => Carbon::now(),
             'tgl_pengambilan' => Carbon::now(),
             'id_pegawai' => $request->id_pegawai,
-            'id_barang' => $request->id_barang,
-            'id_pembeli' => $request->id_pembeli,
         ]);
 
         return response([
