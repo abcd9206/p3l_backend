@@ -20,9 +20,9 @@ return new class extends Migration {
             $table->boolean('verifikasi_pembayaran')->default(false);
             $table->date('tgl_checkout')->nullable()->change();
             $table->date('tgl_lunas')->nullable()->change();
-            $table->date('tgl_pembelian')->nullable()->change();
             $table->date('tgl_selesai')->nullable()->change();
             $table->date('tgl_pengambilan')->nullable()->change();
+            $table->date('tgl_pembelian')->nullable()->change();
 
 
             $table->unsignedBigInteger('id_pembeli');

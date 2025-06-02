@@ -61,7 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/pembelian', [PembelianController::class, 'store']);
     Route::get('/pembelian/{id_pemebelian}', [PembelianController::class, 'search']);
     Route::post('/pembelian/{id_pembelian}', [PembelianController::class, 'updatePembeli']);
-    Route::post('/pembelian/{id_penitipan}', [PembelianController::class, 'updatePegawai']);
+    Route::post('/pembelian/{id_pembelian}', [PembelianController::class, 'updatePegawai']);
     Route::delete('/pembelian/{id_pembelian}', [PembelianController::class, 'destroy']);
 
     //kategori
