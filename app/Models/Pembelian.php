@@ -30,6 +30,7 @@ class Pembelian extends Model
         'tgl_lunas',
         'tgl_selesai',
         'tgl_pengambilan',
+        'tgl_pembelian',
         'id_pegawai',
         'id_pembeli',
         'id_barang',

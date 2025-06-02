@@ -18,11 +18,11 @@ return new class extends Migration {
             $table->string('status_pembayaran');
             $table->string('foto_buktiPembayaran');
             $table->boolean('verifikasi_pembayaran')->default(false);
-            $table->date('tgl_checkout');
-            $table->date('tgl_lunas');
-            $table->date('tgl_pembelian');
-            $table->date('tgl_selesai');
-            $table->date('tgl_pengambilan');
+            $table->date('tgl_checkout')->nullable()->change();
+            $table->date('tgl_lunas')->nullable()->change();
+            $table->date('tgl_selesai')->nullable()->change();
+            $table->date('tgl_pengambilan')->nullable()->change();
+            $table->date('tgl_pembelian')->nullable()->change();
 
 
             $table->unsignedBigInteger('id_pembeli');

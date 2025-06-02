@@ -11,6 +11,7 @@ use App\Http\Controllers\BarangController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 
 class PembelianController extends Controller
@@ -41,11 +42,14 @@ class PembelianController extends Controller
             'metode_pembayaran' => 'required|string|max:50',
             'verifikasi_pembayaran' => 'required|boolean',
             'id_barang' => '',
+            'id_pembeli' => '',
+            'id_pegawai' => '',
         ]);
 
         if ($validate->fails()) {
             return response(['message' => $validate->errors()->first()], 400);
         }
+
 
         $barang = Barang::find($request->id_barang);
 
@@ -61,7 +65,26 @@ class PembelianController extends Controller
 
         $pembelianData['status_pembayaran'] = 'pending';
 
-        $pembelian = Pembelian::create($pembelianData);
+        $pembelianData['foto_buktiPembayaran'] = '-';
+
+        $pembelian = Pembelian::create([
+            'jml_barang' => $request->jml_barang,
+            'metode_pembayaran' => $request->metode_pembayaran,
+            'verifikasi_pembayaran' => 0,
+            'id_barang' => $request->id_barang,
+            'total_pembelian' => $total,
+            'id_pembeli' => $request->id_pembeli,
+            'status_pembayaran' => 'pending',
+            'foto_buktiPembayaran' => '-',
+            'tgl_checkout' => Carbon::now(),
+            'tgl_lunas' => Carbon::now(),
+            'tgl_selesai' => Carbon::now(),
+            'tgl_pembelian' => Carbon::now(),
+            'tgl_pengambilan' => Carbon::now(),
+            'id_pegawai' => $request->id_pegawai,
+            'id_barang' => $request->id_barang,
+            'id_pembeli' => $request->id_pembeli,
+        ]);
 
         return response([
             'message' => 'Pembelian berhasil ditambahkan',
@@ -69,68 +92,54 @@ class PembelianController extends Controller
         ], 201);
     }
 
-    public function updatePembeli(Request $request, string $id_pembelian)
+    public function updatePembeli(Request $request, $id)
     {
-        $pembeli = Auth::user();
-        $user = Pembeli::find($pembeli->id_pembeli);
+        $pembelian = Pembelian::find($id);
 
-        if (!$pembeli) {
-            return response(['message' => 'Pegawai tidak ditemukan'], 404);
-        }
-
-        $pembelian = Pembelian::find($id_pembelian);
-
-        if (is_null($pembelian)) {
+        if (!$pembelian) {
             return response([
-                'message' => 'Pembelian Not Found',
-                'data' => null
+                'message' => 'Pembelian tidak ditemukan.'
             ], 404);
         }
 
         $updateData = $request->all();
 
-        // kalo lebih dr 1 menit dan belum ada bukti pelunasan
-        if ($updateData->status_pembayaran === 'pending' && !$updateData->foto_buktiPembayaran && now()->diffInMinutes($updateData->tgl_chekout) >= 1) {
-            $updateData->status_pembayaran = 'batal';
+        // === Cek kondisi batal jika pending dan belum upload bukti ===
+        if (
+            $pembelian->status_pembayaran === 'pending' &&
+            empty($pembelian->foto_buktiPembayaran)
+        ) {
+            $checkoutTime = Carbon::parse($pembelian->tgl_chekout);
+            $now = now();
 
-            // $pembelian->delete();
+            if ($checkoutTime->diffInMinutes($now) >= 1) {
+                $pembelian->status_pembayaran = 'batal';
+                $pembelian->save();
 
-            // Pembelian::where('id_pembeli', $pembeli->id_pembeli)->delete();
-
-            return response([
-                'message' => 'Pembayaran dibatalkan karena melebihi batas waktu tanpa bukti pembayaran.',
-            ], 200);
-        }
-
-        // kalo pembeli udah upload bukti
-        if ($request->hasFile('foto_buktiPembayaran')) {
-            $validate = Validator::make($request->all(), [
-                'foto_buktiPembayaran' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            ]);
-
-            if ($validate->fails()) {
                 return response([
-                    'message' => $validate->errors()
-                ], 400);
+                    'message' => 'Pembayaran dibatalkan karena melebihi batas waktu tanpa bukti pembayaran.',
+                    'data' => $pembelian
+                ], 200);
             }
-
-            $uploadFolder = 'bukti_pembayaran';
-            $image = $request->file('foto_buktiPembayaran');
-            $imagePath = $image->store($uploadFolder, 'public');
-            $imageName = basename($imagePath);
-
-            $updateData['foto_buktiPembayaran'] = $imageName;
         }
 
-        if (!empty($updateData)) {
-            $pembelian->update($updateData);
+        // === Cek jika ada upload bukti pembayaran dan sebelumnya belum ada ===
+        if (
+            isset($updateData['foto_buktiPembayaran']) &&
+            empty($pembelian->foto_buktiPembayaran)
+        ) {
+            $pembelian->status_pembayaran = 'berhasil';
         }
+
+        // Update semua data
+        $pembelian->update($updateData);
 
         return response([
-            'message' => 'Pembelian Update Successfully',
-            'data' => $pembelian,
+            'message' => 'Data pembelian berhasil diperbarui.',
+            'data' => $pembelian
         ], 200);
     }
+
 
     public function updatePegawai(Request $request, string $id_pembelian)
     {
