@@ -137,23 +137,39 @@ class PenitipController extends Controller
             ], 404);
         }
 
-        $updateData = $request->only([
-            'email',
-            'password'
-        ]);
+        $saldo = 0;
+        $totalRating = 0;
+        $ratingCount = 0;
 
-        $penitip = Penitip::where('email', $request->email)->first();
+        foreach ($penitip->barang as $barang) {
+            // Ambil data jumlah terjual & donasi dari request jika tersedia
+            $jumlahTerjual = $barang->jumlah_terjual;
+            $jumlahTerdonasi = $barang->jumlah_terdonasi;
 
-        if (!$penitip || !Hash::check($request->password, $penitip->password)) {
-            return response()->json(['message' => 'Email atau password salah'], 401);
+            if ($request->has("barang.{$barang->id}.jumlah_terjual")) {
+                $jumlahTerjual = $request->input("barang.{$barang->id}.jumlah_terjual");
+                $barang->jumlah_terjual = $jumlahTerjual;
+            }
+
+            if ($request->has("barang.{$barang->id}.jumlah_terdonasi")) {
+                $jumlahTerdonasi = $request->input("barang.{$barang->id}.jumlah_terdonasi");
+                $barang->jumlah_terdonasi = $jumlahTerdonasi;
+            }
+
+            $barang->save();
+
+            // 💰 Hitung saldo penitip: 85% dari total penjualan barang
+            if ($jumlahTerjual > 0) {
+                $pendapatanBarang = $barang->harga * $jumlahTerjual * 0.85;
+                $saldo += $pendapatanBarang;
+            }
+
+            // ⭐ Hitung rating
+            if ($barang->rating && is_numeric($barang->rating)) {
+                $totalRating += $barang->rating;
+                $ratingCount++;
+            }
         }
-
-        $penitip->update($updateData);
-
-        return response([
-            'message' => 'Data penitip berhasil diupdate.',
-            'data' => $penitip
-        ], 200);
     }
 
     public function login(Request $request)
