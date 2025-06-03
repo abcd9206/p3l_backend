@@ -88,6 +88,7 @@ class BarangController extends Controller
             'harga_barang' => 'required|numeric|min:0',
             'desc_barang' => 'required|max:255',
             'status_barang' => 'required',
+            'rating_barang' => 'required|numeric|min:0|max:5',
 
         ]);
 

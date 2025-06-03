@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/penitip', [PenitipController::class, 'store']);
     Route::get('/penitip/{id_penitip}', [PenitipController::class, 'search']);
     Route::post('/penitip/{id_penitip}', [PenitipController::class, 'update']);
+    Route::post('/penitip/{id_penitip}', [PenitipController::class, 'updatePegawai']);
     Route::delete('/penitip/{id_penitip}', [PenitipController::class, 'destroy']);
 
     //barang

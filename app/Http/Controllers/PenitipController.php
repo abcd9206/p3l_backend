@@ -128,7 +128,7 @@ class PenitipController extends Controller
 
     public function updatePegawai(Request $request, $id_penitip)
     {
-        $penitip = Penitip::find($id_penitip);
+        $penitip = Penitip::with('barang')->find($id_penitip);
 
         if (is_null($penitip)) {
             return response([
@@ -137,21 +137,55 @@ class PenitipController extends Controller
             ], 404);
         }
 
-        $updateData = $request->only([
-            'email',
-            'password'
+        $request->validate([
+            'barang' => 'required|array',
+            'barang.*.jumlah_terjual' => 'nullable|integer|min:0',
+            'barang.*.jumlah_terdonasi' => 'nullable|integer|min:0',
         ]);
 
-        $penitip = Penitip::where('email', $request->email)->first();
+        $saldo = 0;
+        $totalRating = 0;
+        $ratingCount = 0;
 
-        if (!$penitip || !Hash::check($request->password, $penitip->password)) {
-            return response()->json(['message' => 'Email atau password salah'], 401);
+        foreach ($penitip->barang as $barang) {
+            $barangId = $barang->id;
+
+            // Ambil nilai dari input (jika ada)
+            $jumlahTerjual = $request->input("barang.$barangId.jumlah_terjual", $barang->jumlah_terjual);
+            $jumlahTerdonasi = $request->input("barang.$barangId.jumlah_terdonasi", $barang->jumlah_terdonasi);
+
+            // Update jika ada perubahan
+            $barang->jumlah_terjual = $jumlahTerjual;
+            $barang->jumlah_terdonasi = $jumlahTerdonasi;
+            $barang->save();
+
+            // Hitung saldo
+            if ($jumlahTerjual > 0) {
+                $pendapatanBarang = $barang->harga * $jumlahTerjual * 0.85;
+                $saldo += $pendapatanBarang;
+            }
+
+            // Hitung total rating
+            if ($barang->rating && is_numeric($barang->rating)) {
+                $totalRating += $barang->rating;
+                $ratingCount++;
+            }
         }
 
-        $penitip->update($updateData);
+        // Update saldo ke penitip
+        $penitip->saldo = $saldo;
+
+        // Hitung rata-rata rating jika ada
+        if ($ratingCount > 0) {
+            $penitip->rating = round($totalRating / $ratingCount, 2);
+        }
+
+        $penitip->save();
 
         return response([
-            'message' => 'Data penitip berhasil diupdate.',
+            'message' => 'Data penitip berhasil diperbarui.',
+            'saldo_terbaru' => $penitip->saldo,
+            'rata_rata_rating' => $penitip->rating,
             'data' => $penitip
         ], 200);
     }
