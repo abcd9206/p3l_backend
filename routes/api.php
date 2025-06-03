@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/penitip', [PenitipController::class, 'store']);
     Route::get('/penitip/{id_penitip}', [PenitipController::class, 'search']);
     Route::post('/penitip/{id_penitip}', [PenitipController::class, 'update']);
+    Route::post('/penitip/{id_penitip}', [PenitipController::class, 'updatePegawai']);
     Route::delete('/penitip/{id_penitip}', [PenitipController::class, 'destroy']);
 
     //barang
@@ -57,7 +58,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/penitipan', [PenitipanController::class, 'store']);
     Route::get('/penitipan/{id_penitipan}', [PenitipanController::class, 'search']);
     Route::post('/penitipan/{id_penitipan}', [PenitipanController::class, 'update']);
-    Route::post('/penitipan/{id_penitipan}', [PenitipanController::class, 'updatePegawai']);
     Route::delete('/penitipan/{id_penitipan}', [PenitipanController::class, 'destroy']);
 
     //pembelian
