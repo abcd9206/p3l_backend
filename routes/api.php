@@ -83,6 +83,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/alamat/{id_alamat}', [AlamatController::class, 'search']);
     Route::post('/alamat/{id_alamat}', [AlamatController::class, 'update']);
     Route::delete('/alamat/{id_alamat}', [AlamatController::class, 'destroy']);
+
+    //notifikasi
+    Route::post('/notifikasi', [NotifikasiController::class, 'kirimKeUser']);
 });
 
 //register
