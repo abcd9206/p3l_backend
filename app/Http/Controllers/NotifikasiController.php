@@ -10,7 +10,9 @@ class NotifikasiController extends Controller
     public function kirimKeUser(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'id_pegawai' => 'required|exists:users,id',
+            'id_penitip' => '',
+            'id_pembeli' => '',
             'judul' => 'required|string',
             'pesan' => 'required|string',
         ]);
@@ -36,7 +38,9 @@ class NotifikasiController extends Controller
 
         // Simpan ke database
         $notifikasi = Notifikasi::create([
-            'user_id' => $request->user_id,
+            'id_pegawai' => $request->id_pegawai,
+            'id_penitip' => $request->id_penitip,
+            'id_pembeli' => $request->id_pembeli,
             'judul' => $request->judul,
             'pesan' => $request->pesan,
         ]);
