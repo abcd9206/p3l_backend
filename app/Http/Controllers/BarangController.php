@@ -39,6 +39,9 @@ class BarangController extends Controller
         $barangData["rating_barang"] = 0;
         $barangData["tgl_didonasikan"] = "2000-01-01";
         $barangData["tgl_terdonasi"] = "2000-01-01";
+        $barangData["total_barang"] = 1;
+        $barangData["total_keseluruhan"] = $barangData["harga_barang"];
+
 
         if ($validate->fails()) {
             return response(['message' => $validate->errors()->first()], 400);
@@ -88,7 +91,7 @@ class BarangController extends Controller
             'harga_barang' => 'required|numeric|min:0',
             'desc_barang' => 'required|max:255',
             'status_barang' => 'required',
-            'rating_barang' => 'required|numeric|min:0|max:5',
+            'rating_barang' => 'required|numeric|min:0|max:5 ',
 
         ]);
 

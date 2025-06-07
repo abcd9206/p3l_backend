@@ -25,6 +25,8 @@ class Barang extends Model
         'tgl_terdonasi',
         'harga_barang',
         'desc_barang',
+        'total_barang',
+        'total_keseluruhan',
         'id_pegawai',
         'id_penitip',
         'id_kategori',

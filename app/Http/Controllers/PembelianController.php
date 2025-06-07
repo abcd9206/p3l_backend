@@ -50,9 +50,7 @@ class PembelianController extends Controller
             return response(['message' => $validate->errors()->first()], 400);
         }
 
-
         $barang = Barang::find($request->id_barang);
-
 
         if (!$barang) {
             return response(['message' => 'Barang tidak ditemukan'], 404);
@@ -193,6 +191,15 @@ class PembelianController extends Controller
                 ], 400);
             }
         }
+
+        $barang = Barang::find($request->id_barang);
+
+        if (!$barang) {
+            return response(['message' => 'Barang tidak ditemukan'], 404);
+        }
+
+        $barang->total_barang -= $request->jml_barang;
+        $barang->save();
 
         $pembelian->update($updateData);
 

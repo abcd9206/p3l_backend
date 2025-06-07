@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->date('tgl_didonasikan');
             $table->date('tgl_terdonasi');
             $table->string('desc_barang');
+            $table->integer('total_barang')->default(0);
+            $table->float('total_keseluruhan', 15, 2)->default(0);
 
 
             $table->unsignedBigInteger('id_pegawai');
