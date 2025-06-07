@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pengiriman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotifikasiController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -87,6 +88,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //notifikasi
     Route::post('/notifikasi', [NotifikasiController::class, 'kirimKeUser']);
+    
 });
 
 //register
