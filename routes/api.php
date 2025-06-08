@@ -34,7 +34,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //pegawai
     Route::get('/pegawai', [PegawaiController::class, 'index']);
-    Route::post('/pegawai', [PegawaiController::class, 'store']);
     Route::get('/pegawai/{id_pegawai}', [PegawaiController::class, 'search']);
     Route::post('/pegawai/{id_pegawai}', [PegawaiController::class, 'update']);
     Route::delete('/pegawai/{id_pegawai}', [PegawaiController::class, 'destroy']);
@@ -47,12 +46,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/penitip/{id_penitip}', [PenitipController::class, 'updatePegawai']);
     Route::delete('/penitip/{id_penitip}', [PenitipController::class, 'destroy']);
 
+    //laporan
+    Route::get('/barang/stokGudang', [BarangController::class, 'laporanStokGudang']);
+    Route::get('/barang/perKategori', [BarangController::class, 'laporanPerKategori']);
+
     //barang
-    Route::get('/barang', [BarangController::class, 'index']);
+    
     Route::post('/barang', [BarangController::class, 'store']);
     Route::get('/barang/{id_barang}', [BarangController::class, 'search']);
     Route::post('/barang/{id_barang}', [BarangController::class, 'update']);
     Route::delete('/barang/{id_barang}', [BarangController::class, 'destroy']);
+
 
     //penitipan
     Route::get('/penitipan', [PenitipanController::class, 'index']);
@@ -88,15 +92,28 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //notifikasi
     Route::post('/notifikasi', [NotifikasiController::class, 'kirimKeUser']);
-    
+
+    //merch
+    Route::get('/merch', [MerchController::class, 'index']);
+    Route::post('/merch', [MerchController::class, 'store']);
+    Route::get('/merch/{id_merch}', [MerchController::class, 'search']);
+    Route::put('/merch/{id_merch}', [MerchController::class, 'update']);
+    Route::delete('/merch/{id_merch}', [MerchController::class, 'destroy']);
+
+    //tukar merch
+    Route::post('/pembeli/klaim_merch', [TukarMerchController::class, 'tukar']);
+
 });
 
 //register
 Route::post('/registerOrganisasi', [OrganisasiController::class, 'register']);
 Route::post('/registerPembeli', [PembeliController::class, 'register']);
+Route::post('/pegawai', [PegawaiController::class, 'store']);
 
 //login
 Route::post('/loginOrganisasi', [OrganisasiController::class, 'login']);
 Route::post('/loginPegawai', [PegawaiController::class, 'login']);
 Route::post('/loginPenitip', [PenitipController::class, 'login']);
 Route::post('/loginPembeli', [PembeliController::class, 'login']);
+Route::get('/barang', [BarangController::class, 'index']);
+

@@ -10,6 +10,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class BarangController extends Controller
 {
@@ -140,4 +142,60 @@ class BarangController extends Controller
             'data' => null,
         ], 400);
     }
+
+    public function laporanStokGudang()
+    {
+        $tanggalCetak = Carbon::now()->format('d F Y');
+
+        $dataStok = DB::table('barangs')
+            ->leftJoin('penitipans', 'barangs.id_barang', '=', 'penitipans.id_barang')
+            ->leftJoin('penitips', 'barangs.id_penitip', '=', 'penitips.id_penitip')
+            ->leftJoin('pegawais', 'penitipans.id_pegawai', '=', 'pegawais.id_pegawai')
+            ->select(
+                'barangs.id_barang',
+                'barangs.nama_barang',
+                'barangs.status_barang',
+                'barangs.harga_barang',
+                'penitips.id_penitip',
+                'penitipans.tgl_penitipan',
+                'penitipans.tgl_kadaluarsa',
+                'penitipans.tgl_pengembalian',
+                'pegawais.id_pegawai',
+                'pegawais.nama_pegawai as nama_petugas',
+                'penitipans.konfirmasi_perpanjangan'
+            )
+            //->where('barangs.status_barang', 'tersedia')
+            //->whereDate('penitipans.tgl_penitipan', '<=', Carbon::now()->toDateString()) // stok aktif per hari ini
+            ->get();
+
+        return response()->json([
+            'tanggal_cetak' => $tanggalCetak,
+            'data' => $dataStok,
+        ]);
+    }
+
+    public function laporanPerKategori()
+    {
+        $tahun = Carbon::now()->year;
+        $tanggalCetak = Carbon::now()->format('d F Y');
+
+        $laporan = DB::table('kategoris')
+            ->leftJoin('barangs', 'kategoris.id_kategori', '=', 'barangs.id_kategori')
+            ->select(
+                'kategoris.jenis_kategori as kategori',
+                DB::raw("SUM(CASE WHEN barangs.status_barang = 'terjual' THEN 1 ELSE 0 END) as jumlah_terjual"),
+                DB::raw("SUM(CASE WHEN barangs.status_barang = 'gagal' THEN 1 ELSE 0 END) as jumlah_gagal")
+            )
+            ->groupBy('kategoris.jenis_kategori')
+            ->orderBy('kategoris.jenis_kategori')
+            ->get();
+
+
+        return response()->json([
+            'tahun' => $tahun,
+            'tanggal_cetak' => $tanggalCetak,
+            'data' => $laporan
+        ]);
+    }
+
 }
