@@ -106,19 +106,19 @@ class PenitipController extends Controller
             ], 404);
         }
 
-        $updateData = $request->only([
-            'nama',
-            'email',
-            'password'
+        $validated = $request->validate([
+            'nama_penitip' => 'required|string|max:100',
+            'NIK' => 'required|string|max:20',
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
         ]);
 
-        $penitip = Penitip::where('email', $request->email)->first();
+        $penitip->nama_penitip = $validated['nama_penitip'];
+        $penitip->NIK = $validated['NIK'];
+        $penitip->email = $validated['email'];
+        $penitip->password = bcrypt($validated['password']);
 
-        if (!$penitip || !Hash::check($request->password, $penitip->password)) {
-            return response()->json(['message' => 'Email atau password salah'], 401);
-        }
-
-        $penitip->update($updateData);
+        $penitip->save();
 
         return response([
             'message' => 'Data penitip berhasil diupdate.',
