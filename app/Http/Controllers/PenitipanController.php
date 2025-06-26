@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PenitipanController extends Controller
 {
@@ -182,4 +183,34 @@ class PenitipanController extends Controller
             'data' => null,
         ], 400);
     }
+
+    public function laporanBarangKadaluarsa()
+    {
+        $tahun = \Carbon\Carbon::now()->year;
+        $tanggalCetak = \Carbon\Carbon::now()->format('d F Y');
+        $today = \Carbon\Carbon::today();
+
+        $laporan = DB::table('penitipans')
+            ->join('barangs', 'barangs.id_barang', '=', 'penitipans.id_barang')
+            ->join('penitips', 'penitips.id_penitip', '=', 'penitipans.id_penitip')
+            ->whereDate('penitipans.tgl_kadaluarsa', '=', $today)
+            ->select(
+                // 'penitipans.*',
+                'barangs.id_barang',
+                'barangs.nama_barang',
+                'penitips.id_penitip',
+                'penitips.nama_penitip',
+                'penitipans.tgl_penitipan',
+                'penitipans.tgl_kadaluarsa',
+                'penitipans.tgl_pengembalian'
+            )
+            ->get();
+
+        return response()->json([
+            'tahun' => $tahun,
+            'tanggal_cetak' => $tanggalCetak,
+            'data' => $laporan
+        ]);
+    }
+
 }

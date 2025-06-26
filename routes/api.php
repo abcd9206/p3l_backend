@@ -47,11 +47,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/penitip/{id_penitip}', [PenitipController::class, 'destroy']);
 
     //laporan
-    Route::get('/barang/stokGudang', [BarangController::class, 'laporanStokGudang']);
+    Route::get('/penitipan/barangKadaluarsa', [PenitipanController::class, 'laporanBarangKadaluarsa']);
     Route::get('/barang/perKategori', [BarangController::class, 'laporanPerKategori']);
+    Route::get('/barang/stokGudang', [BarangController::class, 'laporanStokGudang']);
+    Route::get('/barang/penjualanHunter', [BarangController::class, 'laporanPenjualanHunter']);
+
 
     //barang
-    
     Route::post('/barang', [BarangController::class, 'store']);
     Route::get('/barang/{id_barang}', [BarangController::class, 'search']);
     Route::post('/barang/{id_barang}', [BarangController::class, 'update']);
@@ -116,4 +118,3 @@ Route::post('/loginPegawai', [PegawaiController::class, 'login']);
 Route::post('/loginPenitip', [PenitipController::class, 'login']);
 Route::post('/loginPembeli', [PembeliController::class, 'login']);
 Route::get('/barang', [BarangController::class, 'index']);
-

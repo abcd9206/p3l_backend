@@ -184,12 +184,37 @@ class BarangController extends Controller
             ->select(
                 'kategoris.jenis_kategori as kategori',
                 DB::raw("SUM(CASE WHEN barangs.status_barang = 'terjual' THEN 1 ELSE 0 END) as jumlah_terjual"),
-                DB::raw("SUM(CASE WHEN barangs.status_barang = 'gagal' THEN 1 ELSE 0 END) as jumlah_gagal")
+                DB::raw("SUM(CASE WHEN barangs.status_barang = 'dikembalikan' THEN 1 ELSE 0 END) as jumlah_gagal")
             )
             ->groupBy('kategoris.jenis_kategori')
             ->orderBy('kategoris.jenis_kategori')
             ->get();
 
+
+        return response()->json([
+            'tahun' => $tahun,
+            'tanggal_cetak' => $tanggalCetak,
+            'data' => $laporan
+        ]);
+    }
+
+    public function laporanPenjualanHunter()
+    {
+        $tahun = Carbon::now()->year;
+        $tanggalCetak = Carbon::now()->format('d F Y');
+
+        $laporan = DB::table('barangs')
+            ->join('kategoris', 'barangs.id_kategori', '=', 'kategoris.id_kategori')
+            ->join('pegawais', 'barangs.id_pegawai', '=', 'pegawais.id_pegawai')
+            ->select(
+                'kategoris.jenis_kategori as kategori',
+                DB::raw("SUM(CASE WHEN barangs.status_barang = 'terjual' THEN 1 ELSE 0 END) as jumlah_terjual"),
+                DB::raw("SUM(CASE WHEN barangs.status_barang = 'dikembalikan' THEN 1 ELSE 0 END) as jumlah_gagal")
+            )
+            ->where('barangs.id_pegawai', 1) // filter khusus pegawai tertentu (misal: hunter)
+            ->groupBy('kategoris.jenis_kategori')
+            ->orderBy('kategoris.jenis_kategori')
+            ->get();
 
         return response()->json([
             'tahun' => $tahun,

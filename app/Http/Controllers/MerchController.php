@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Merchandise;
+use App\Models\Merch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,7 +11,7 @@ class MerchController extends Controller
 {
     public function index()
     {
-        $merch = Merchandise::all();
+        $merch = Merch::all();
 
         return response()->json([
             'message' => 'Daftar semua merchandise',
@@ -32,7 +32,7 @@ class MerchController extends Controller
             return response(['message' => $validate->errors()->first()], 400);
         }
 
-        $merch = Merchandise::create($data);
+        $merch = Merch::create($data);
 
         return response([
             'message' => 'Merchandise berhasil ditambahkan',
@@ -59,7 +59,7 @@ class MerchController extends Controller
 
     public function update(Request $request, string $id_merch)
     {
-        $merch = Merchandise::find($id_merch);
+        $merch = Merch::find($id_merch);
 
         if (!$merch) {
             return response([
@@ -89,7 +89,7 @@ class MerchController extends Controller
 
     public function destroy($id_merch)
     {
-        $merch = Merchandise::find($id_merch);
+        $merch = Merch::find($id_merch);
 
         if (!$merch) {
             return response([
