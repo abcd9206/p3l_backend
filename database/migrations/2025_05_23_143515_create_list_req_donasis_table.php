@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('list_req_donasis', function (Blueprint $table) {
             $table->id('id_reqDonasi');
             $table->string('desc_request');
+            $table->date('tgl_reqDonasi')->nullable()->change();
 
             $table->unsignedBigInteger('id_organisasi');
             $table->foreign('id_organisasi')->references('id_organisasi')->on('organisasis')->onDelete('cascade');

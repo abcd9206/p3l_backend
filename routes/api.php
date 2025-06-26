@@ -9,6 +9,7 @@ use App\Http\Controllers\PenitipanController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PengirimanController;
 use App\Http\Controllers\AlamatController;
+use App\Http\Controllers\ListReqDonasiController;
 use App\Http\Controllers\Controller;
 use App\Models\Pengiriman;
 use Illuminate\Http\Request;
@@ -104,6 +105,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //tukar merch
     Route::post('/pembeli/klaim_merch', [TukarMerchController::class, 'tukar']);
+
+    //request donasi
+    Route::get('/reqDonasi', [ListReqDonasiController::class, 'index']);
+    Route::post('/reqDonasi', [ListReqDonasiController::class, 'store']);
+    Route::get('/reqDonasi/{id_reqDonasi}', [ListReqDonasiController::class, 'search']);
+    Route::put('/reqDonasi/{id_reqDonasi}', [ListReqDonasiController::class, 'update']);
+    Route::delete('/reqDonasi/{id_reqDonasi}', [ListReqDonasiController::class, 'destroy']);
 
 });
 
